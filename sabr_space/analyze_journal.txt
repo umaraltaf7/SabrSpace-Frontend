@@ -1,0 +1,13 @@
+﻿Analyzing lib...
+
+  error - features\journal\data\providers\journal_providers.dart:12:38 - Classes can only extend other classes. Try specifying a different superclass, or removing the extends clause. - extends_non_class
+  error - features\journal\data\providers\journal_providers.dart:13:49 - Too many positional arguments: 0 expected, but 1 found. Try removing the extra arguments. - extra_positional_arguments
+  error - features\journal\data\providers\journal_providers.dart:22:5 - Undefined name 'state'. Try correcting the name to one that is defined, or defining the name. - undefined_identifier
+  error - features\journal\data\providers\journal_providers.dart:29:5 - Undefined name 'state'. Try correcting the name to one that is defined, or defining the name. - undefined_identifier
+  error - features\journal\data\providers\journal_providers.dart:35:5 - Undefined name 'state'. Try correcting the name to one that is defined, or defining the name. - undefined_identifier
+  error - features\journal\data\providers\journal_providers.dart:41:5 - Undefined name 'state'. Try correcting the name to one that is defined, or defining the name. - undefined_identifier
+  error - features\journal\data\providers\journal_providers.dart:47:5 - The function 'StateNotifierProvider' isn't defined. Try importing the library that defines 'StateNotifierProvider', correcting the name to the name of an existing function, or defining a function named 'StateNotifierProvider'. - undefined_function
+warning - features\journal\presentation\screens\journal_detail_screen\journal_detail_screen.dart:9:8 - Unused import: 'package:sabr_space/features/journal/data/models/journal_entry.dart'. Try removing the import directive. - unused_import
+   info - features\journal\presentation\screens\journal_history_screen\journal_history_screen.dart:104:47 - Unnecessary use of multiple underscores. Try using '_'. - unnecessary_underscores
+
+9 issues found.

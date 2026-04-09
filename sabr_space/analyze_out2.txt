@@ -1,0 +1,5 @@
+﻿Analyzing lib...
+
+warning - features\sanctuary\presentation\widgets\burning_envelope_animation.dart:153:8 - The value of the field '_envelopeRect' isn't used. Try removing the field, or using it. - unused_field
+
+1 issue found.

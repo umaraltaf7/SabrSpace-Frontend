@@ -1,0 +1,37 @@
+﻿Analyzing sabr_space...
+
+  error - lib\core\router\app_router.dart:45:18 - Undefined name 'AppColors'. Try correcting the name to one that is defined, or defining the name. - undefined_identifier
+  error - lib\core\router\app_router.dart:48:22 - Undefined name 'AppColors'. Try correcting the name to one that is defined, or defining the name. - undefined_identifier
+  error - lib\core\router\app_router.dart:57:27 - Invalid constant value. - invalid_constant
+  error - lib\core\router\app_router.dart:57:27 - Undefined name 'AppSpacing'. Try correcting the name to one that is defined, or defining the name. - undefined_identifier
+  error - lib\core\router\app_router.dart:58:25 - Invalid constant value. - invalid_constant
+  error - lib\core\router\app_router.dart:58:25 - Undefined name 'AppSpacing'. Try correcting the name to one that is defined, or defining the name. - undefined_identifier
+  error - lib\core\router\app_router.dart:94:33 - Undefined name 'AppColors'. Try correcting the name to one that is defined, or defining the name. - undefined_identifier
+  error - lib\core\router\app_router.dart:94:53 - Undefined name 'AppColors'. Try correcting the name to one that is defined, or defining the name. - undefined_identifier
+  error - lib\core\router\app_router.dart:100:22 - Undefined name 'AppTypography'. Try correcting the name to one that is defined, or defining the name. - undefined_identifier
+  error - lib\core\router\app_router.dart:101:35 - Undefined name 'AppColors'. Try correcting the name to one that is defined, or defining the name. - undefined_identifier
+  error - lib\core\router\app_router.dart:101:55 - Undefined name 'AppColors'. Try correcting the name to one that is defined, or defining the name. - undefined_identifier
+  error - lib\core\router\app_router.dart:132:42 - The name 'IntroScreen' isn't a class. Try correcting the name to match an existing class. - creation_with_non_type
+  error - lib\core\router\app_router.dart:136:42 - The name 'LoginScreen' isn't a class. Try correcting the name to match an existing class. - creation_with_non_type
+  error - lib\core\router\app_router.dart:140:42 - The name 'SignUpScreen' isn't a class. Try correcting the name to match an existing class. - creation_with_non_type
+  error - lib\core\router\app_router.dart:155:46 - The name 'HomeScreen' isn't a class. Try correcting the name to match an existing class. - creation_with_non_type
+  error - lib\core\router\app_router.dart:161:46 - The name 'MoodCheckScreen' isn't a class. Try correcting the name to match an existing class. - creation_with_non_type
+  error - lib\core\router\app_router.dart:167:46 - The name 'AyahCarouselScreen' isn't a class. Try correcting the name to match an existing class. - creation_with_non_type
+  error - lib\core\router\app_router.dart:173:46 - The name 'SupportiveAyahScreen' isn't a class. Try correcting the name to match an existing class. - creation_with_non_type
+  error - lib\core\router\app_router.dart:179:46 - The name 'BreatheMinimalScreen' isn't a class. Try correcting the name to match an existing class. - creation_with_non_type
+  error - lib\core\router\app_router.dart:185:46 - The name 'BreatheSessionScreen' isn't a class. Try correcting the name to match an existing class. - creation_with_non_type
+  error - lib\core\router\app_router.dart:191:46 - The name 'BreatheCompletionScreen' isn't a class. Try correcting the name to match an existing class. - creation_with_non_type
+  error - lib\core\router\app_router.dart:197:46 - The name 'GriefWritingScreen' isn't a class. Try correcting the name to match an existing class. - creation_with_non_type
+  error - lib\core\router\app_router.dart:203:46 - The name 'GriefBurnScreen' isn't a class. Try correcting the name to match an existing class. - creation_with_non_type
+  error - lib\core\router\app_router.dart:209:46 - The name 'GriefCompletionScreen' isn't a class. Try correcting the name to match an existing class. - creation_with_non_type
+  error - lib\core\router\app_router.dart:215:46 - The name 'MilestoneScreen' isn't a class. Try correcting the name to match an existing class. - creation_with_non_type
+  error - lib\core\router\app_router.dart:221:46 - The name 'MindfulnessScreen' isn't a class. Try correcting the name to match an existing class. - creation_with_non_type
+  error - lib\core\router\app_router.dart:227:46 - The name 'ProfileScreen' isn't a class. Try correcting the name to match an existing class. - creation_with_non_type
+  error - lib\core\router\app_router.dart:233:46 - The name 'SupportOptionsScreen' isn't a class. Try correcting the name to match an existing class. - creation_with_non_type
+  error - lib\core\router\app_router.dart:239:46 - The name 'PremiumScreen' isn't a class. Try correcting the name to match an existing class. - creation_with_non_type
+  error - test\widget_test.dart:10:56 - Invalid constant value. - invalid_constant
+  error - test\widget_test.dart:10:56 - The function 'SabrSpaceApp' isn't defined. Try importing the library that defines 'SabrSpaceApp', correcting the name to the name of an existing function, or defining a function named 'SabrSpaceApp'. - undefined_function
+   info - fix_imports.dart:22:7 - Don't invoke 'print' in production code. Try using a logging framework. - avoid_print
+   info - lib\core\router\app_router.dart:121:38 - Statements in an if should be enclosed in a block. Try wrapping the statement in a block. - curly_braces_in_flow_control_structures
+
+33 issues found.

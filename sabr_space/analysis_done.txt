@@ -1,0 +1,24 @@
+﻿Analyzing sabr_space...
+
+  error - test\widget_test.dart:16:35 - The name 'MyApp' isn't a class. Try correcting the name to match an existing class. - creation_with_non_type
+warning - lib\core\router\app_router.dart:1:8 - Unused import: 'package:sabr_space/features/home/presentation/screens/home_screen/home_screen.dart'. Try removing the import directive. - unused_import
+warning - lib\core\router\app_router.dart:2:8 - Unused import: 'package:sabr_space/features/home/presentation/screens/mood_check_screen/mood_check_screen.dart'. Try removing the import directive. - unused_import
+warning - lib\core\router\app_router.dart:3:8 - Unused import: 'package:sabr_space/features/intro/presentation/screens/intro_screen/intro_screen.dart'. Try removing the import directive. - unused_import
+warning - lib\core\router\app_router.dart:4:8 - Unused import: 'package:sabr_space/features/intro/presentation/screens/login_screen/login_screen.dart'. Try removing the import directive. - unused_import
+warning - lib\core\router\app_router.dart:5:8 - Unused import: 'package:sabr_space/features/intro/presentation/screens/signup_screen/signup_screen.dart'. Try removing the import directive. - unused_import
+warning - lib\core\router\app_router.dart:6:8 - Unused import: 'package:sabr_space/features/profile/presentation/screens/premium_screen/premium_screen.dart'. Try removing the import directive. - unused_import
+warning - lib\core\router\app_router.dart:7:8 - Unused import: 'package:sabr_space/features/profile/presentation/screens/profile_screen/profile_screen.dart'. Try removing the import directive. - unused_import
+warning - lib\core\router\app_router.dart:8:8 - Unused import: 'package:sabr_space/features/profile/presentation/screens/support_options_screen/support_options_screen.dart'. Try removing the import directive. - unused_import
+warning - lib\core\router\app_router.dart:9:8 - Unused import: 'package:sabr_space/features/sanctuary/presentation/screens/ayah_carousel_screen/ayah_carousel_screen.dart'. Try removing the import directive. - unused_import
+warning - lib\core\router\app_router.dart:10:8 - Unused import: 'package:sabr_space/features/sanctuary/presentation/screens/breathe_completion_screen/breathe_completion_screen.dart'. Try removing the import directive. - unused_import
+warning - lib\core\router\app_router.dart:11:8 - Unused import: 'package:sabr_space/features/sanctuary/presentation/screens/breathe_minimal_screen/breathe_minimal_screen.dart'. Try removing the import directive. - unused_import
+warning - lib\core\router\app_router.dart:12:8 - Unused import: 'package:sabr_space/features/sanctuary/presentation/screens/breathe_session_screen/breathe_session_screen.dart'. Try removing the import directive. - unused_import
+warning - lib\core\router\app_router.dart:13:8 - Unused import: 'package:sabr_space/features/sanctuary/presentation/screens/grief_burn_screen/grief_burn_screen.dart'. Try removing the import directive. - unused_import
+warning - lib\core\router\app_router.dart:14:8 - Unused import: 'package:sabr_space/features/sanctuary/presentation/screens/grief_completion_screen/grief_completion_screen.dart'. Try removing the import directive. - unused_import
+warning - lib\core\router\app_router.dart:15:8 - Unused import: 'package:sabr_space/features/sanctuary/presentation/screens/grief_writing_screen/grief_writing_screen.dart'. Try removing the import directive. - unused_import
+warning - lib\core\router\app_router.dart:16:8 - Unused import: 'package:sabr_space/features/sanctuary/presentation/screens/milestone_screen/milestone_screen.dart'. Try removing the import directive. - unused_import
+warning - lib\core\router\app_router.dart:17:8 - Unused import: 'package:sabr_space/features/sanctuary/presentation/screens/mindfulness_screen/mindfulness_screen.dart'. Try removing the import directive. - unused_import
+warning - lib\core\router\app_router.dart:18:8 - Unused import: 'package:sabr_space/features/sanctuary/presentation/screens/supportive_ayah_screen/supportive_ayah_screen.dart'. Try removing the import directive. - unused_import
+   info - fix_imports.dart:22:7 - Don't invoke 'print' in production code. Try using a logging framework. - avoid_print
+
+20 issues found.

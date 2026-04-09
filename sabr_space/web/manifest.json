@@ -1,11 +1,11 @@
 {
-    "name": "sabr_space",
-    "short_name": "sabr_space",
+    "name": "Sabr Space",
+    "short_name": "Sabr Space",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "Sabr Space — mindfulness and spiritual wellness.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
