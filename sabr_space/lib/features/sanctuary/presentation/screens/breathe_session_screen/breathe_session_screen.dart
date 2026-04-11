@@ -7,7 +7,6 @@ import 'package:go_router/go_router.dart';
 import 'package:sabr_space/core/constants/app_spacing.dart';
 import 'package:sabr_space/core/constants/app_strings.dart';
 import 'package:sabr_space/core/theme/theme_palette.dart';
-import 'package:sabr_space/core/theme/app_gradients.dart';
 import 'package:sabr_space/core/theme/app_typography.dart';
 import 'package:sabr_space/core/widgets/screen_back_button.dart';
 import 'package:sabr_space/features/sanctuary/presentation/models/breathe_session_args.dart';
@@ -162,7 +161,7 @@ class _BreatheSessionScreenState extends State<BreatheSessionScreen> {
 
   void _endSession() {
     _tickTimer?.cancel();
-    context.pop();
+    context.pushReplacement('/breathe-complete');
   }
 
   @override
@@ -171,15 +170,37 @@ class _BreatheSessionScreenState extends State<BreatheSessionScreen> {
     final pairDhikr = widget.args.pairWithDhikr;
     final phaseDur = _phaseDurationSeconds(_phase);
     final animKey = ValueKey<String>('${_phase.name}_$_cycleId');
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(
-          gradient: AppGradients.etherealBackground(context),
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: isDark
+                ? const [
+                    _BreatheSessionPalette.darkBackgroundTop,
+                    _BreatheSessionPalette.darkBackgroundBottom,
+                  ]
+                : const [
+                    _BreatheSessionPalette.lightBackgroundTop,
+                    _BreatheSessionPalette.lightBackgroundBottom,
+                  ],
+          ),
         ),
         child: SafeArea(
-          child: Column(
+          child: Stack(
             children: [
+              Positioned.fill(
+                child: IgnorePointer(
+                  child: CustomPaint(
+                    painter: _SessionDecorPainter(isDark: isDark),
+                  ),
+                ),
+              ),
+              Column(
+                children: [
               const SizedBox(height: AppSpacing.xl),
 
               Padding(
@@ -194,13 +215,18 @@ class _BreatheSessionScreenState extends State<BreatheSessionScreen> {
                         vertical: AppSpacing.xs,
                       ),
                       decoration: BoxDecoration(
-                        color: context.palette.primaryFixed.withValues(alpha: 0.5),
+                        color: (isDark
+                                ? _BreatheSessionPalette.darkAccentSoft
+                                : _BreatheSessionPalette.lightAccentSoft)
+                            .withValues(alpha: 0.35),
                         borderRadius: AppSpacing.borderRadiusFull,
                       ),
                       child: Text(
                         AppStrings.sessionInProgress,
                         style: AppTypography.labelSmall(context).copyWith(
-                          color: context.palette.primary,
+                          color: isDark
+                              ? _BreatheSessionPalette.darkTextPrimary
+                              : _BreatheSessionPalette.lightAccent,
                           letterSpacing: 1,
                         ),
                       ),
@@ -214,7 +240,11 @@ class _BreatheSessionScreenState extends State<BreatheSessionScreen> {
 
               Text(
                 AppStrings.peacefulMorning,
-                style: AppTypography.headlineSmall(context),
+                style: AppTypography.headlineSmall(context).copyWith(
+                  color: isDark
+                      ? _BreatheSessionPalette.darkTextPrimary
+                      : _BreatheSessionPalette.lightTextPrimary,
+                ),
               ),
               const Spacer(),
 
@@ -234,8 +264,12 @@ class _BreatheSessionScreenState extends State<BreatheSessionScreen> {
                             painter: _ProgressRingPainter(
                               progress: progress,
                               strokeWidth: 8,
-                              trackColor: context.palette.surfaceContainerHigh,
-                              progressColor: context.palette.breatheAccent,
+                              trackColor: isDark
+                                  ? _BreatheSessionPalette.darkSurfaceElevated
+                                  : _BreatheSessionPalette.lightSurface,
+                              progressColor: isDark
+                                  ? _BreatheSessionPalette.darkAccent
+                                  : _BreatheSessionPalette.lightAccent,
                             ),
                           ),
                         ),
@@ -258,12 +292,25 @@ class _BreatheSessionScreenState extends State<BreatheSessionScreen> {
                             height: 226,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color: context.palette.surfaceContainerLowest,
+                              gradient: LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: isDark
+                                    ? const [
+                                        _BreatheSessionPalette.darkCardTop,
+                                        _BreatheSessionPalette.darkCardBottom,
+                                      ]
+                                    : const [
+                                        _BreatheSessionPalette.lightCardTop,
+                                        _BreatheSessionPalette.lightCardBottom,
+                                      ],
+                              ),
                               boxShadow: [
                                 BoxShadow(
-                                  color: context.palette.breatheAccent.withValues(
-                                    alpha: 0.15,
-                                  ),
+                                  color: (isDark
+                                          ? _BreatheSessionPalette.darkAccent
+                                          : _BreatheSessionPalette.lightAccent)
+                                      .withValues(alpha: 0.24),
                                   blurRadius: 28,
                                   spreadRadius: 2,
                                 ),
@@ -292,7 +339,9 @@ class _BreatheSessionScreenState extends State<BreatheSessionScreen> {
                       tooltip: AppStrings.breatheChangeWord,
                       icon: Icon(
                         Icons.autorenew_rounded,
-                        color: context.palette.breatheAccent,
+                        color: isDark
+                            ? _BreatheSessionPalette.darkAccentSoft
+                            : _BreatheSessionPalette.lightAccent,
                         size: 28,
                       ),
                     ),
@@ -304,7 +353,9 @@ class _BreatheSessionScreenState extends State<BreatheSessionScreen> {
               Text(
                 '${(progress * 100).clamp(0, 100).toInt()}% of session',
                 style: AppTypography.labelMedium(context).copyWith(
-                  color: context.palette.onSurfaceVariant,
+                  color: isDark
+                      ? _BreatheSessionPalette.darkTextSecondary
+                      : _BreatheSessionPalette.lightTextSecondary,
                 ),
               ),
               const SizedBox(height: AppSpacing.sm),
@@ -323,7 +374,9 @@ class _BreatheSessionScreenState extends State<BreatheSessionScreen> {
               Text(
                 _timeLabel,
                 style: AppTypography.headlineSmall(context).copyWith(
-                  color: context.palette.primary,
+                  color: isDark
+                      ? _BreatheSessionPalette.darkAccentSoft
+                      : _BreatheSessionPalette.lightAccent,
                   fontWeight: FontWeight.w600,
                   letterSpacing: 1.2,
                 ),
@@ -340,6 +393,8 @@ class _BreatheSessionScreenState extends State<BreatheSessionScreen> {
                 ),
               ),
               const SizedBox(height: AppSpacing.xxl),
+                ],
+              ),
             ],
           ),
         ),
@@ -348,12 +403,13 @@ class _BreatheSessionScreenState extends State<BreatheSessionScreen> {
   }
 
   Widget _buildCenterContent(BuildContext context, bool pairDhikr) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final phaseStyle = AppTypography.titleLarge(context).copyWith(
-      color: context.palette.breatheAccent,
+      color: Colors.white,
       fontWeight: FontWeight.w700,
     );
     final dhikrStyle = AppTypography.headlineSmall(context).copyWith(
-      color: context.palette.breatheAccent,
+      color: Colors.white,
       fontWeight: FontWeight.w700,
       height: 1.2,
     );
@@ -377,7 +433,9 @@ class _BreatheSessionScreenState extends State<BreatheSessionScreen> {
         Text(
           '$_phaseSecondsLeft s',
           style: AppTypography.labelSmall(context).copyWith(
-            color: context.palette.outline,
+            color: isDark
+                ? _BreatheSessionPalette.darkTextSecondary
+                : Colors.white.withValues(alpha: 0.88),
             letterSpacing: 0.5,
           ),
         ),
@@ -386,18 +444,190 @@ class _BreatheSessionScreenState extends State<BreatheSessionScreen> {
   }
 
   Widget _buildInfoChip(String label, IconData icon) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, size: 16, color: context.palette.outline),
+        Icon(
+          icon,
+          size: 16,
+          color: isDark
+              ? _BreatheSessionPalette.darkTextSecondary
+              : _BreatheSessionPalette.lightTextSecondary,
+        ),
         const SizedBox(width: 6),
         Text(
           label,
-          style: AppTypography.labelSmall(context).copyWith(color: context.palette.outline),
+          style: AppTypography.labelSmall(context).copyWith(
+            color: isDark
+                ? _BreatheSessionPalette.darkTextSecondary
+                : _BreatheSessionPalette.lightTextSecondary,
+          ),
         ),
       ],
     );
   }
+}
+
+class _SessionDecorPainter extends CustomPainter {
+  _SessionDecorPainter({required this.isDark});
+
+  final bool isDark;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final farGround = Paint()
+      ..color = (isDark ? const Color(0xFF5A2F79) : const Color(0xFFA978CC))
+          .withValues(alpha: isDark ? 0.58 : 0.46);
+    final nearGround = Paint()
+      ..color = (isDark ? const Color(0xFF44245C) : const Color(0xFF8F58BB))
+          .withValues(alpha: isDark ? 0.78 : 0.58);
+
+    final farPath = Path()
+      ..moveTo(0, size.height)
+      ..lineTo(0, size.height * 0.80)
+      ..quadraticBezierTo(
+        size.width * 0.22,
+        size.height * 0.72,
+        size.width * 0.50,
+        size.height * 0.80,
+      )
+      ..quadraticBezierTo(
+        size.width * 0.74,
+        size.height * 0.90,
+        size.width,
+        size.height * 0.78,
+      )
+      ..lineTo(size.width, size.height)
+      ..close();
+    canvas.drawPath(farPath, farGround);
+
+    final nearPath = Path()
+      ..moveTo(0, size.height)
+      ..lineTo(0, size.height * 0.92)
+      ..quadraticBezierTo(
+        size.width * 0.35,
+        size.height * 0.84,
+        size.width * 0.60,
+        size.height * 0.92,
+      )
+      ..quadraticBezierTo(
+        size.width * 0.84,
+        size.height * 0.98,
+        size.width,
+        size.height * 0.90,
+      )
+      ..lineTo(size.width, size.height)
+      ..close();
+    canvas.drawPath(nearPath, nearGround);
+
+    final treeColor = (isDark ? const Color(0xFF2A173A) : const Color(0xFF6B3D8B))
+        .withValues(alpha: isDark ? 0.86 : 0.62);
+    final treePaint = Paint()
+      ..color = treeColor
+      ..strokeCap = StrokeCap.round;
+
+    // Main tree trunk from bottom-left near footer area.
+    treePaint.strokeWidth = 7;
+    canvas.drawLine(
+      Offset(size.width * 0.03, size.height * 1.02),
+      Offset(size.width * 0.20, size.height * 0.44),
+      treePaint,
+    );
+
+    // Branches spreading upward across the screen.
+    treePaint.strokeWidth = 3.4;
+    canvas.drawLine(
+      Offset(size.width * 0.16, size.height * 0.60),
+      Offset(size.width * 0.36, size.height * 0.46),
+      treePaint,
+    );
+    canvas.drawLine(
+      Offset(size.width * 0.18, size.height * 0.54),
+      Offset(size.width * 0.44, size.height * 0.30),
+      treePaint,
+    );
+    canvas.drawLine(
+      Offset(size.width * 0.20, size.height * 0.50),
+      Offset(size.width * 0.56, size.height * 0.24),
+      treePaint,
+    );
+    canvas.drawLine(
+      Offset(size.width * 0.14, size.height * 0.70),
+      Offset(size.width * 0.34, size.height * 0.62),
+      treePaint,
+    );
+
+    // Left-side branches from the trunk.
+    canvas.drawLine(
+      Offset(size.width * 0.14, size.height * 0.64),
+      Offset(size.width * 0.06, size.height * 0.52),
+      treePaint,
+    );
+    canvas.drawLine(
+      Offset(size.width * 0.16, size.height * 0.58),
+      Offset(size.width * 0.04, size.height * 0.40),
+      treePaint,
+    );
+    canvas.drawLine(
+      Offset(size.width * 0.18, size.height * 0.52),
+      Offset(size.width * 0.02, size.height * 0.30),
+      treePaint,
+    );
+    canvas.drawLine(
+      Offset(size.width * 0.22, size.height * 0.60),
+      Offset(size.width * 0.66, size.height * 0.50),
+      treePaint,
+    );
+
+    // Subtle branches behind breathing circle.
+    treePaint.strokeWidth = 2.3;
+    canvas.drawLine(
+      Offset(size.width * 0.26, size.height * 0.62),
+      Offset(size.width * 0.50, size.height * 0.56),
+      treePaint..color = treeColor.withValues(alpha: isDark ? 0.44 : 0.34),
+    );
+    canvas.drawLine(
+      Offset(size.width * 0.24, size.height * 0.68),
+      Offset(size.width * 0.52, size.height * 0.66),
+      treePaint,
+    );
+    canvas.drawLine(
+      Offset(size.width * 0.28, size.height * 0.58),
+      Offset(size.width * 0.58, size.height * 0.46),
+      treePaint,
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant _SessionDecorPainter oldDelegate) {
+    return oldDelegate.isDark != isDark;
+  }
+}
+
+class _BreatheSessionPalette {
+  static const Color lightBackgroundTop = Color(0xFFFFFFFF);
+  static const Color lightBackgroundBottom = Color(0xFFF1E4FB);
+  static const Color darkBackgroundTop = Color(0xFF32143E);
+  static const Color darkBackgroundBottom = Color(0xFF4D255A);
+
+  static const Color lightCardTop = Color(0xFF955FBE);
+  static const Color lightCardBottom = Color(0xFF63339A);
+  static const Color darkCardTop = Color(0xFF44245C);
+  static const Color darkCardBottom = Color(0xFF663783);
+
+  static const Color lightSurface = Color(0xFFECE1FA);
+  static const Color darkSurfaceElevated = Color(0xFF46275E);
+
+  static const Color lightAccent = Color(0xFF6E35A3);
+  static const Color lightAccentSoft = Color(0xFFCCA8E2);
+  static const Color darkAccent = Color(0xFFBC80DE);
+  static const Color darkAccentSoft = Color(0xFFE0B2F0);
+
+  static const Color lightTextPrimary = Color(0xFF3D274E);
+  static const Color lightTextSecondary = Color(0xFF7C57A0);
+  static const Color darkTextPrimary = Color(0xFFF4EAFB);
+  static const Color darkTextSecondary = Color(0xFFE8D4F4);
 }
 
 class _ProgressRingPainter extends CustomPainter {

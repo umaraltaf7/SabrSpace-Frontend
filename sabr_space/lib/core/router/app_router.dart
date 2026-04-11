@@ -3,8 +3,8 @@ import 'package:go_router/go_router.dart';
 
 import 'package:sabr_space/core/constants/app_spacing.dart';
 import 'package:sabr_space/core/constants/app_strings.dart';
-import 'package:sabr_space/core/theme/app_gradients.dart';
 import 'package:sabr_space/core/theme/theme_palette.dart';
+import 'package:sabr_space/features/intro/presentation/widgets/sanctuary_logo.dart';
 
 import 'package:sabr_space/features/home/presentation/screens/home_screen/home_screen.dart';
 import 'package:sabr_space/features/home/presentation/models/mood_quotes_args.dart';
@@ -42,116 +42,6 @@ import 'package:sabr_space/features/audio/presentation/screens/audio_player_scre
 
 final GlobalKey<ScaffoldState> _shellScaffoldKey = GlobalKey<ScaffoldState>();
 
-String _shellTitleForPath(String path) {
-  switch (path) {
-    case '/home':
-      return AppStrings.home;
-    case '/streak':
-      return AppStrings.streakScreenTitle;
-    case '/mood-check':
-      return AppStrings.howAreYouFeeling;
-    case '/mood-quotes':
-      return AppStrings.moodQuotesCarouselTitle;
-    case '/ayah-carousel':
-      return AppStrings.navAyahs;
-    case '/supportive-ayah':
-      return AppStrings.findPeaceInHisWords;
-    case '/mood-further-support':
-      return AppStrings.moodFurtherSupportTitle;
-    case '/breathe':
-      return AppStrings.breathe;
-    case '/dhikr':
-      return AppStrings.dhikrScreenTitle;
-    case '/breathe-session':
-      return AppStrings.sessionInProgress;
-    case '/breathe-complete':
-      return AppStrings.sessionComplete;
-    case '/grief-write':
-      return AppStrings.grief;
-    case '/grief-burn':
-      return AppStrings.griefBurner;
-    case '/journal':
-      return 'Journal';
-    case '/grief-complete':
-      return AppStrings.releaseComplete;
-    case '/milestone':
-      return AppStrings.navMilestones;
-    case '/mindfulness':
-      return AppStrings.navMindfulness;
-    case '/profile':
-      return AppStrings.profile;
-    case '/support':
-      return AppStrings.supportOptions;
-    case '/premium':
-      return AppStrings.upgradeToPremium;
-    case '/privacy-policy':
-      return AppStrings.privacyPolicy;
-    case '/terms-conditions':
-      return AppStrings.termsAndConditions;
-    case '/audio-library':
-      return AppStrings.audioLibrary;
-    case '/audio-player':
-      return AppStrings.nowPlaying;
-    default:
-      return AppStrings.appName;
-  }
-}
-
-IconData _shellIconForPath(String path) {
-  switch (path) {
-    case '/home':
-      return Icons.home_max_rounded;
-    case '/streak':
-      return Icons.local_fire_department_rounded;
-    case '/mood-check':
-      return Icons.favorite_rounded;
-    case '/mood-quotes':
-      return Icons.format_quote_rounded;
-    case '/ayah-carousel':
-      return Icons.auto_stories_rounded;
-    case '/supportive-ayah':
-      return Icons.wb_sunny_rounded;
-    case '/mood-further-support':
-      return Icons.volunteer_activism_rounded;
-    case '/breathe':
-      return Icons.air_rounded;
-    case '/dhikr':
-      return Icons.self_improvement_rounded;
-    case '/breathe-session':
-      return Icons.self_improvement_rounded;
-    case '/breathe-complete':
-      return Icons.air_rounded;
-    case '/grief-write':
-      return Icons.local_fire_department_rounded;
-    case '/grief-burn':
-      return Icons.whatshot_rounded;
-    case '/journal':
-      return Icons.book_rounded;
-    case '/grief-complete':
-      return Icons.check_circle_rounded;
-    case '/milestone':
-      return Icons.emoji_events_rounded;
-    case '/mindfulness':
-      return Icons.spa_rounded;
-    case '/profile':
-      return Icons.person_rounded;
-    case '/support':
-      return Icons.help_outline_rounded;
-    case '/premium':
-      return Icons.workspace_premium_rounded;
-    case '/privacy-policy':
-      return Icons.privacy_tip_rounded;
-    case '/terms-conditions':
-      return Icons.article_rounded;
-    case '/audio-library':
-      return Icons.library_music_rounded;
-    case '/audio-player':
-      return Icons.headphones_rounded;
-    default:
-      return Icons.space_dashboard_rounded;
-  }
-}
-
 void _goFromDrawer(BuildContext context, String location) {
   context.go(location);
   Navigator.of(context).pop();
@@ -164,16 +54,23 @@ class _AppDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final palette = context.palette;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final text = context.text;
+
     return Drawer(
-      backgroundColor: palette.surface,
+      backgroundColor: isDark
+          ? const Color(0xFF32143E)
+          : Colors.white,
       child: ListView(
         padding: EdgeInsets.zero,
         children: [
           DrawerHeader(
-            decoration: BoxDecoration(
-              gradient: AppGradients.primaryGradient(context),
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [Color(0xFF6B2FA0), Color(0xFF9B4DC8)],
+              ),
             ),
             margin: EdgeInsets.zero,
             padding: const EdgeInsets.fromLTRB(
@@ -184,23 +81,30 @@ class _AppDrawer extends StatelessWidget {
             ),
             child: Align(
               alignment: Alignment.bottomLeft,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text(
-                    AppStrings.appName,
-                    style: text.headlineSmall?.copyWith(
-                      color: palette.onPrimary,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  const SizedBox(height: AppSpacing.xs),
-                  Text(
-                    AppStrings.tagline,
-                    style: text.bodySmall?.copyWith(
-                      color: palette.onPrimary.withValues(alpha: 0.85),
-                    ),
+                  SanctuaryLogo(size: 48, showDropShadow: false),
+                  const SizedBox(width: AppSpacing.md),
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        AppStrings.appName,
+                        style: text.headlineSmall?.copyWith(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      const SizedBox(height: AppSpacing.xs),
+                      Text(
+                        AppStrings.tagline,
+                        style: text.bodySmall?.copyWith(
+                          color: Colors.white.withOpacity(0.85),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -208,55 +112,69 @@ class _AppDrawer extends StatelessWidget {
           ),
           _drawerTile(
             context,
+            isDark: isDark,
             icon: Icons.home_max_outlined,
             label: AppStrings.home,
             path: '/home',
           ),
           _drawerTile(
             context,
+            isDark: isDark,
             icon: Icons.local_fire_department_outlined,
             label: AppStrings.grief,
             path: '/grief-write',
           ),
           _drawerTile(
             context,
+            isDark: isDark,
             icon: Icons.air_outlined,
             label: AppStrings.breathe,
             path: '/breathe',
           ),
           _drawerTile(
             context,
+            isDark: isDark,
             icon: Icons.self_improvement_outlined,
             label: AppStrings.dhikrScreenTitle,
             path: '/dhikr',
           ),
           _drawerTile(
             context,
+            isDark: isDark,
             icon: Icons.book_outlined,
             label: 'Journal',
             path: '/journal',
           ),
           _drawerTile(
             context,
+            isDark: isDark,
             icon: Icons.library_music_outlined,
             label: AppStrings.audioLibrary,
             path: '/audio-library',
           ),
           _drawerTile(
             context,
+            isDark: isDark,
             icon: Icons.person_outline,
             label: AppStrings.profile,
             path: '/profile',
           ),
-          const Divider(height: 1),
+          Divider(
+            height: 1,
+            color: isDark
+                ? const Color(0xFFCC98E7).withOpacity(0.15)
+                : const Color(0xFFBC95D8).withOpacity(0.40),
+          ),
           _drawerTile(
             context,
+            isDark: isDark,
             icon: Icons.privacy_tip_outlined,
             label: AppStrings.privacyPolicy,
             path: '/privacy-policy',
           ),
           _drawerTile(
             context,
+            isDark: isDark,
             icon: Icons.description_outlined,
             label: AppStrings.termsAndConditions,
             path: '/terms-conditions',
@@ -268,114 +186,166 @@ class _AppDrawer extends StatelessWidget {
 
   Widget _drawerTile(
     BuildContext context, {
+    required bool isDark,
     required IconData icon,
     required String label,
     required String path,
   }) {
-    final palette = context.palette;
     final text = context.text;
     final selected = currentPath == path;
+
+    final activeColor = isDark
+        ? const Color(0xFFBC80DE)
+        : const Color(0xFF6E35A3);
+    final inactiveIconColor = isDark
+        ? const Color(0xFFE8D4F4).withOpacity(0.6)
+        : const Color(0xFF7C57A0);
+    final inactiveTextColor = isDark
+        ? const Color(0xFFF4EAFB)
+        : const Color(0xFF3D274E);
+
     return ListTile(
       leading: Icon(
         icon,
-        color: selected ? palette.primary : palette.onSurfaceVariant,
+        color: selected ? activeColor : inactiveIconColor,
       ),
       title: Text(
         label,
         style: text.titleSmall?.copyWith(
-          color: selected ? palette.primary : palette.onSurface,
+          color: selected ? activeColor : inactiveTextColor,
           fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
         ),
       ),
       selected: selected,
-      selectedTileColor: palette.primaryFixed.withValues(alpha: 0.45),
+      selectedTileColor: isDark
+          ? const Color(0xFF46275E).withOpacity(0.6)
+          : const Color(0xFFE0C9F0).withOpacity(0.5),
       onTap: () => _goFromDrawer(context, path),
     );
   }
 }
 
-/// Shell: menu (bottom-left), bottom bar icon. Back lives on each screen via [ScreenBackButton].
+/// Shell: 5-item bottom nav with drawer access on "More".
 class _MainShell extends StatelessWidget {
   const _MainShell({required this.child, required this.routerState});
 
   final Widget child;
   final GoRouterState routerState;
 
-  static const double _shellBottomInsetForMenu = 56;
-
   @override
   Widget build(BuildContext context) {
     final path = routerState.uri.path;
     final palette = context.palette;
+    final items = const <_ShellNavItem>[
+      _ShellNavItem(
+        label: 'Home',
+        icon: Icons.home_filled,
+        route: '/home',
+      ),
+      _ShellNavItem(
+        label: 'Breathe',
+        icon: Icons.air_rounded,
+        route: '/breathe',
+      ),
+      _ShellNavItem(
+        label: 'Grief',
+        icon: Icons.local_fire_department_rounded,
+        route: '/grief-write',
+      ),
+      _ShellNavItem(
+        label: 'Profile',
+        icon: Icons.person_rounded,
+        route: '/profile',
+      ),
+      _ShellNavItem(
+        label: 'More',
+        icon: Icons.more_horiz_rounded,
+      ),
+    ];
+    final selectedIndex = _selectedShellIndex(path);
 
     return Scaffold(
       key: _shellScaffoldKey,
       drawer: _AppDrawer(currentPath: path),
-      body: Stack(
-        fit: StackFit.expand,
-        clipBehavior: Clip.none,
-        children: [
-          Positioned.fill(
-            child: Padding(
-              padding: const EdgeInsets.only(bottom: _shellBottomInsetForMenu),
-              child: child,
-            ),
-          ),
-          Positioned(
-            left: AppSpacing.sm,
-            bottom: AppSpacing.sm,
-            child: SafeArea(
-              top: false,
-              child: Tooltip(
-                message: 'Menu',
-                child: Material(
-                  color: palette.surface,
-                  elevation: 2,
-                  shadowColor: palette.onSurface.withValues(alpha: 0.12),
-                  shape: const CircleBorder(),
-                  clipBehavior: Clip.antiAlias,
-                  child: InkWell(
-                    customBorder: const CircleBorder(),
-                    onTap: () =>
-                        _shellScaffoldKey.currentState?.openDrawer(),
-                    child: Padding(
-                      padding: const EdgeInsets.all(10),
-                      child: Icon(
-                        Icons.menu_rounded,
-                        size: 24,
-                        color: palette.primary,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
+      body: child,
       bottomNavigationBar: Material(
         elevation: 8,
         shadowColor: palette.onSurface.withValues(alpha: 0.08),
         color: palette.surface,
         child: SafeArea(
           child: SizedBox(
-            height: 56,
-            child: Center(
-              child: Semantics(
-                label: _shellTitleForPath(path),
-                header: true,
-                child: Icon(
-                  _shellIconForPath(path),
-                  size: 28,
-                  color: palette.primary,
-                ),
-              ),
+            height: 74,
+            child: Row(
+              children: List.generate(items.length, (index) {
+                final item = items[index];
+                final selected = index == selectedIndex;
+                final color = selected ? palette.primary : palette.onSurfaceVariant;
+                return Expanded(
+                  child: InkWell(
+                    onTap: () {
+                      if (item.route == null) {
+                        _shellScaffoldKey.currentState?.openDrawer();
+                        return;
+                      }
+                      if (path != item.route) {
+                        context.go(item.route!);
+                      }
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: AppSpacing.sm),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(item.icon, color: color, size: 24),
+                          const SizedBox(height: 4),
+                          Text(
+                            item.label,
+                            style: context.text.labelSmall?.copyWith(
+                              color: color,
+                              fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              }),
             ),
           ),
         ),
       ),
     );
   }
+}
+
+int _selectedShellIndex(String path) {
+  if (path == '/home') return 0;
+  if (path == '/breathe' ||
+      path == '/breathe-session' ||
+      path == '/breathe-complete' ||
+      path == '/dhikr') {
+    return 1;
+  }
+  if (path == '/grief-write' ||
+      path == '/grief-burn' ||
+      path == '/grief-complete') {
+    return 2;
+  }
+  if (path == '/profile') return 3;
+  return 4;
+}
+
+class _ShellNavItem {
+  final String label;
+  final IconData icon;
+  final String? route;
+
+  const _ShellNavItem({
+    required this.label,
+    required this.icon,
+    this.route,
+  });
 }
 
 /// Application router using go_router.
@@ -387,7 +357,7 @@ final GoRouter appRouter = GoRouter(
     GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
     GoRoute(path: '/signup', builder: (context, state) => const SignUpScreen()),
 
-    // ── Shell routes (floating menu + bottom bar icon, drawer for tabs) ──
+    // ── Shell routes (bottom nav + drawer on "More") ──
     ShellRoute(
       builder: (context, state, child) {
         return _MainShell(routerState: state, child: child);

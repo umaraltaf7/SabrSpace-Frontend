@@ -13,7 +13,7 @@ Future<void> bootstrapThemeMode() async {
 }
 
 /// Effective mode before first [ThemeModeNotifier] update (after [bootstrapThemeMode]).
-ThemeMode get initialThemeMode => _bootstrappedThemeMode ?? ThemeMode.system;
+ThemeMode get initialThemeMode => _bootstrappedThemeMode ?? ThemeMode.dark;
 
 Future<void> persistThemeMode(ThemeMode mode) async {
   final prefs = await SharedPreferences.getInstance();

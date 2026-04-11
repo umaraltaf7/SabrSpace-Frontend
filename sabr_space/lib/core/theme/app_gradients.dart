@@ -28,7 +28,7 @@ class AppGradients {
   static const LinearGradient goldGradient = LinearGradient(
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
-    colors: [Color(0xFFE9C349), Color(0xFFD4AF37)],
+    colors: [Color(0xFF9B4DC8), Color(0xFF6E35A3)],
   );
 
   static LinearGradient backgroundGradient(BuildContext context) {

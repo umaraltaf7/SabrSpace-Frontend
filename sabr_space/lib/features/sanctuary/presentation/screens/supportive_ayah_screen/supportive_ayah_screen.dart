@@ -29,43 +29,56 @@ class MoodFurtherSupportScreen extends StatelessWidget {
         children: [
           const _SoftSupportBackground(),
           SafeArea(
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                final maxW = math.min(
-                  constraints.maxWidth - 2 * horizontal,
-                  _maxContentWidth,
-                );
-                return Align(
-                  alignment: Alignment.topCenter,
-                  child: SingleChildScrollView(
-                    padding: EdgeInsets.fromLTRB(
-                      horizontal,
-                      AppSpacing.md,
-                      horizontal,
-                      AppSpacing.xxl + media.padding.bottom,
-                    ),
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints(maxWidth: maxW),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              const ScreenBackButton(),
-                              const SizedBox(width: AppSpacing.sm),
-                              Expanded(
-                                child: Text(
-                                  AppStrings.moodFurtherSupportTitle,
-                                  style: AppTypography.headlineSmall(context).copyWith(
-                                    color: context.palette.primary,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ),
-                            ],
+            child: Column(
+              children: [
+                // ── Top bar (pinned at top) ──
+                Padding(
+                  padding: EdgeInsets.fromLTRB(
+                    horizontal, AppSpacing.md, horizontal, 0,
+                  ),
+                  child: Row(
+                    children: [
+                      const ScreenBackButton(),
+                      const SizedBox(width: AppSpacing.sm),
+                      Expanded(
+                        child: Text(
+                          AppStrings.moodFurtherSupportTitle,
+                          style: AppTypography.headlineSmall(context).copyWith(
+                            color: context.palette.primary,
+                            fontWeight: FontWeight.w600,
                           ),
-                          const SizedBox(height: AppSpacing.xxl),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                // ── Scrollable cards (centered vertically) ──
+                Expanded(
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      final maxW = math.min(
+                        constraints.maxWidth - 2 * horizontal,
+                        _maxContentWidth,
+                      );
+                      return SingleChildScrollView(
+                        padding: EdgeInsets.fromLTRB(
+                          horizontal,
+                          AppSpacing.lg,
+                          horizontal,
+                          AppSpacing.xxl + media.padding.bottom,
+                        ),
+                        child: ConstrainedBox(
+                          constraints: BoxConstraints(
+                            minHeight: constraints.maxHeight - AppSpacing.lg - AppSpacing.xxl - media.padding.bottom,
+                          ),
+                          child: Center(
+                            child: ConstrainedBox(
+                              constraints: BoxConstraints(maxWidth: maxW),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
                           _SupportActionCard(
                             radius: _cardRadius,
                             category: AppStrings.supportCategoryReflection,
@@ -76,14 +89,13 @@ class MoodFurtherSupportScreen extends StatelessWidget {
                               height: 52,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                color: context.palette.primaryFixed
-                                    .withValues(alpha: 0.65),
+                                color: Colors.white.withOpacity(0.18),
                               ),
                               alignment: Alignment.center,
                               child: Text(
                                 '\u201D',
                                 style: AppTypography.headlineMedium(context).copyWith(
-                                  color: context.palette.primary,
+                                  color: Colors.white,
                                   height: 1,
                                   fontWeight: FontWeight.w700,
                                 ),
@@ -100,20 +112,18 @@ class MoodFurtherSupportScreen extends StatelessWidget {
                             bottomHint: Icon(
                               Icons.chevron_right_rounded,
                               size: 22,
-                              color: context.palette.onSurfaceVariant
-                                  .withValues(alpha: 0.45),
+                              color: Colors.white.withOpacity(0.50),
                             ),
                             leadingIcon: Container(
                               width: 52,
                               height: 52,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                color: context.palette.primaryFixed
-                                    .withValues(alpha: 0.65),
+                                color: Colors.white.withOpacity(0.18),
                               ),
-                              child: Icon(
+                              child: const Icon(
                                 Icons.spa_rounded,
-                                color: context.palette.primary,
+                                color: Colors.white,
                                 size: 26,
                               ),
                             ),
@@ -128,27 +138,18 @@ class MoodFurtherSupportScreen extends StatelessWidget {
                             trailingAccent: Icon(
                               Icons.favorite_border_rounded,
                               size: 22,
-                              color: context.palette.onSurfaceVariant
-                                  .withValues(alpha: 0.5),
+                              color: Colors.white.withOpacity(0.55),
                             ),
                             leadingIcon: Container(
                               width: 52,
                               height: 52,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                color: context.palette.surfaceContainerLowest,
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: context.palette.onSurface
-                                        .withValues(alpha: 0.06),
-                                    blurRadius: 12,
-                                    offset: const Offset(0, 4),
-                                  ),
-                                ],
+                                color: Colors.white.withOpacity(0.18),
                               ),
-                              child: Icon(
+                              child: const Icon(
                                 Icons.phone_in_talk_rounded,
-                                color: context.palette.secondaryFixedDim,
+                                color: Colors.white,
                                 size: 26,
                               ),
                             ),
@@ -179,13 +180,17 @@ class MoodFurtherSupportScreen extends StatelessWidget {
                             ),
                             textAlign: TextAlign.center,
                           ),
-                          const SizedBox(height: AppSpacing.xl),
-                        ],
-                      ),
-                    ),
+                                const SizedBox(height: AppSpacing.xl),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
                   ),
-                );
-              },
+                ),
+              ],
             ),
           ),
         ],
@@ -205,30 +210,48 @@ class _SoftSupportBackground extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ColoredBox(
-      color: context.palette.surface,
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: isDark
+              ? const [
+                  _PanicPalette.darkBackgroundTop,
+                  _PanicPalette.darkBackgroundMid,
+                  _PanicPalette.darkBackgroundBottom,
+                ]
+              : const [
+                  _PanicPalette.lightBackgroundTop,
+                  _PanicPalette.lightBackgroundMid,
+                  _PanicPalette.lightBackgroundBottom,
+                ],
+          stops: const [0.0, 0.48, 1.0],
+        ),
+      ),
       child: Stack(
         fit: StackFit.expand,
         children: [
           Positioned(
             top: -90,
             right: -70,
-            child: _orb(240, context.palette.primaryFixed.withValues(alpha: 0.38)),
+            child: _orb(240, context.palette.primaryFixed.withValues(alpha: 0.28)),
           ),
           Positioned(
             top: 180,
             left: -100,
-            child: _orb(260, context.palette.primaryFixedDim.withValues(alpha: 0.22)),
+            child: _orb(260, context.palette.primaryFixedDim.withValues(alpha: 0.16)),
           ),
           Positioned(
             bottom: -40,
             right: -30,
-            child: _orb(200, context.palette.primaryFixed.withValues(alpha: 0.28)),
+            child: _orb(200, context.palette.primaryFixed.withValues(alpha: 0.20)),
           ),
           Positioned(
             bottom: 120,
             left: -50,
-            child: _orb(180, context.palette.primaryFixedDim.withValues(alpha: 0.2)),
+            child: _orb(180, context.palette.primaryFixedDim.withValues(alpha: 0.14)),
           ),
         ],
       ),
@@ -281,7 +304,7 @@ class _SupportActionCard extends StatelessWidget {
           Text(
             category,
             style: AppTypography.labelSmall(context).copyWith(
-              color: context.palette.secondary,
+              color: const Color(0xFFE0C8F0),
               letterSpacing: 1.6,
               fontWeight: FontWeight.w700,
             ),
@@ -290,15 +313,15 @@ class _SupportActionCard extends StatelessWidget {
           Text(
             title,
             style: AppTypography.titleMedium(context).copyWith(
-              color: context.palette.primary,
-              fontWeight: FontWeight.w600,
+              color: Colors.white,
+              fontWeight: FontWeight.w700,
             ),
           ),
           const SizedBox(height: AppSpacing.xs),
           Text(
             subtitle,
             style: AppTypography.bodyMedium(context).copyWith(
-              color: context.palette.onSurfaceVariant,
+              color: Colors.white.withOpacity(0.85),
               height: 1.45,
             ),
           ),
@@ -310,8 +333,10 @@ class _SupportActionCard extends StatelessWidget {
       ),
     );
 
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Material(
-      color: context.palette.surfaceContainerLowest,
+      color: Colors.transparent,
       elevation: 0,
       shadowColor: Colors.transparent,
       borderRadius: BorderRadius.circular(radius),
@@ -321,10 +346,24 @@ class _SupportActionCard extends StatelessWidget {
         child: Ink(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(radius),
-            color: context.palette.surfaceContainerLowest,
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: isDark
+                  ? const [
+                      _PanicPalette.darkCardTop,
+                      _PanicPalette.darkCardBottom,
+                    ]
+                  : const [
+                      _PanicPalette.lightCardTop,
+                      _PanicPalette.lightCardBottom,
+                    ],
+            ),
             boxShadow: [
               BoxShadow(
-                color: context.palette.onSurface.withValues(alpha: 0.07),
+                color: isDark
+                    ? _PanicPalette.darkShadow.withOpacity(0.56)
+                    : _PanicPalette.lightShadow.withOpacity(0.30),
                 blurRadius: 28,
                 offset: const Offset(0, 10),
                 spreadRadius: -4,
@@ -411,4 +450,19 @@ class _SupportFooterLine extends StatelessWidget {
       ],
     );
   }
+}
+
+class _PanicPalette {
+  static const Color lightBackgroundTop = Color(0xFFFFFFFF);
+  static const Color lightBackgroundMid = Color(0xFFF7EEFF);
+  static const Color lightBackgroundBottom = Color(0xFFF1E4FB);
+  static const Color darkBackgroundTop = Color(0xFF32143E);
+  static const Color darkBackgroundMid = Color(0xFF40204F);
+  static const Color darkBackgroundBottom = Color(0xFF4D255A);
+  static const Color lightCardTop = Color(0xFF955FBE);
+  static const Color lightCardBottom = Color(0xFF63339A);
+  static const Color darkCardTop = Color(0xFF44245C);
+  static const Color darkCardBottom = Color(0xFF663783);
+  static const Color lightShadow = Color(0xFF6F39AF);
+  static const Color darkShadow = Color(0xFF0C0515);
 }

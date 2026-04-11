@@ -2,12 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:sabr_space/core/constants/app_spacing.dart';
 import 'package:sabr_space/core/constants/app_strings.dart';
-import 'package:sabr_space/core/theme/theme_palette.dart';
-import 'package:sabr_space/core/theme/app_gradients.dart';
 import 'package:sabr_space/core/theme/app_typography.dart';
 import 'package:sabr_space/features/intro/presentation/widgets/auth_text_field.dart';
 import 'package:sabr_space/features/intro/presentation/widgets/gradient_button.dart';
-
 
 /// Sign Up screen with registration form.
 class SignUpScreen extends StatelessWidget {
@@ -15,12 +12,21 @@ class SignUpScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
+      backgroundColor: isDark ? _SP.darkBgBottom : _SP.lightBgBottom,
       body: Container(
         width: double.infinity,
         height: double.infinity,
         decoration: BoxDecoration(
-          gradient: AppGradients.etherealBackground(context),
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: isDark
+                ? const [_SP.darkBgTop, _SP.darkBgBottom]
+                : const [_SP.lightBgTop, _SP.lightBgBottom],
+          ),
         ),
         child: SafeArea(
           child: SingleChildScrollView(
@@ -32,21 +38,45 @@ class SignUpScreen extends StatelessWidget {
                 Text(
                   AppStrings.appName,
                   style: AppTypography.headlineMedium(context).copyWith(
-                    color: context.palette.primary,
+                    color: isDark
+                        ? _SP.darkTextPrimary
+                        : _SP.lightAccent,
+                    fontWeight: FontWeight.w700,
                   ),
                 ),
                 const SizedBox(height: AppSpacing.jumbo),
 
-                // ── White card container ──
+                // ── Card container ──
                 Container(
-                  margin: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+                  margin: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.lg),
                   padding: AppSpacing.cardPadding,
                   decoration: BoxDecoration(
-                    color: context.palette.surfaceContainerLowest,
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: isDark
+                          ? [
+                              _SP.darkSurfaceElevated.withOpacity(0.82),
+                              _SP.darkSurface.withOpacity(0.68),
+                            ]
+                          : [
+                              _SP.lightSurfaceSoft.withOpacity(0.56),
+                              _SP.lightSurface.withOpacity(0.78),
+                            ],
+                    ),
                     borderRadius: AppSpacing.borderRadiusXxl,
+                    border: Border.all(
+                      color: isDark
+                          ? _SP.darkBorder.withOpacity(0.22)
+                          : _SP.lightBorder.withOpacity(0.42),
+                      width: 1.2,
+                    ),
                     boxShadow: [
                       BoxShadow(
-                        color: context.palette.onSurface.withValues(alpha: 0.06),
+                        color: isDark
+                            ? _SP.darkShadow.withOpacity(0.46)
+                            : _SP.lightShadow.withOpacity(0.14),
                         blurRadius: 32,
                         offset: const Offset(0, 8),
                       ),
@@ -56,22 +86,30 @@ class SignUpScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       // ── Tab toggle (Sign Up active) ──
-                      _buildTabToggle(context, isLogin: false),
+                      _buildTabToggle(context,
+                          isLogin: false, isDark: isDark),
                       const SizedBox(height: AppSpacing.xxl),
 
                       // ── Heading ──
                       Text(
                         AppStrings.beginJourney,
-                        style: AppTypography.headlineSmall(context).copyWith(
-                          color: context.palette.onBackground,
+                        style: AppTypography.headlineSmall(context)
+                            .copyWith(
+                          color: isDark
+                              ? _SP.darkTextPrimary
+                              : _SP.lightTextPrimary,
+                          fontWeight: FontWeight.w700,
                         ),
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: AppSpacing.sm),
                       Text(
                         AppStrings.joinSanctuary,
-                        style: AppTypography.bodyMedium(context).copyWith(
-                          color: context.palette.onSurfaceVariant,
+                        style: AppTypography.bodyMedium(context)
+                            .copyWith(
+                          color: isDark
+                              ? _SP.darkTextSecondary
+                              : _SP.lightTextSecondary,
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -123,14 +161,21 @@ class SignUpScreen extends StatelessWidget {
                   children: [
                     Text(
                       AppStrings.alreadyHaveAccount,
-                      style: AppTypography.bodySmall(context),
+                      style: AppTypography.bodySmall(context).copyWith(
+                        color: isDark
+                            ? _SP.darkTextSecondary
+                            : _SP.lightTextSecondary,
+                      ),
                     ),
                     GestureDetector(
                       onTap: () => context.go('/login'),
                       child: Text(
                         AppStrings.login,
-                        style: AppTypography.labelMedium(context).copyWith(
-                          color: context.palette.primary,
+                        style: AppTypography.labelMedium(context)
+                            .copyWith(
+                          color: isDark
+                              ? _SP.darkAccent
+                              : _SP.lightAccent,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
@@ -146,21 +191,39 @@ class SignUpScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildTabToggle(BuildContext context, {required bool isLogin}) {
+  Widget _buildTabToggle(BuildContext context,
+      {required bool isLogin, required bool isDark}) {
     return Container(
       height: 48,
       decoration: BoxDecoration(
-        color: context.palette.surfaceContainerHigh,
+        gradient: LinearGradient(
+          colors: isDark
+              ? [
+                  _SP.darkSurface.withOpacity(0.60),
+                  _SP.darkSurfaceElevated.withOpacity(0.40),
+                ]
+              : [
+                  _SP.lightSurfaceSoft.withOpacity(0.46),
+                  _SP.lightSurface.withOpacity(0.54),
+                ],
+        ),
         borderRadius: AppSpacing.borderRadiusFull,
+        border: Border.all(
+          color: isDark
+              ? _SP.darkBorder.withOpacity(0.18)
+              : _SP.lightBorder.withOpacity(0.32),
+          width: 1,
+        ),
       ),
       padding: const EdgeInsets.all(4),
       child: Row(
         children: [
           Expanded(
-            child: _tab(context, 'Login', isLogin, () => context.go('/login')),
+            child: _tab(context, 'Login', isLogin,
+                () => context.go('/login'), isDark),
           ),
           Expanded(
-            child: _tab(context, 'Sign Up', !isLogin, () {}),
+            child: _tab(context, 'Sign Up', !isLogin, () {}, isDark),
           ),
         ],
       ),
@@ -172,6 +235,7 @@ class SignUpScreen extends StatelessWidget {
     String label,
     bool active,
     VoidCallback onTap,
+    bool isDark,
   ) {
     return GestureDetector(
       onTap: onTap,
@@ -180,22 +244,33 @@ class SignUpScreen extends StatelessWidget {
         curve: Curves.easeInOut,
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          color:
-          active ? context.palette.surfaceContainerLowest : Colors.transparent,
+          gradient: active
+              ? LinearGradient(
+                  colors: isDark
+                      ? const [_SP.darkOrbTop, _SP.darkOrbBottom]
+                      : const [_SP.lightOrbTop, _SP.lightOrbBottom],
+                )
+              : null,
           borderRadius: AppSpacing.borderRadiusFull,
           boxShadow: active
               ? [
-            BoxShadow(
-              color: context.palette.onSurface.withValues(alpha: 0.06),
-              blurRadius: 8,
-            )
-          ]
+                  BoxShadow(
+                    color: isDark
+                        ? _SP.darkAccent.withOpacity(0.28)
+                        : _SP.lightAccent.withOpacity(0.22),
+                    blurRadius: 10,
+                  ),
+                ]
               : null,
         ),
         child: Text(
           label,
           style: AppTypography.labelLarge(context).copyWith(
-            color: active ? context.palette.primary : context.palette.outline,
+            color: active
+                ? Colors.white
+                : (isDark
+                    ? _SP.darkTextSecondary.withOpacity(0.58)
+                    : _SP.lightTextSecondary.withOpacity(0.62)),
             fontWeight: active ? FontWeight.w700 : FontWeight.w500,
           ),
         ),
@@ -204,3 +279,32 @@ class SignUpScreen extends StatelessWidget {
   }
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Palette — exact home screen colors
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _SP {
+  static const Color lightBgTop = Color(0xFFFFFFFF);
+  static const Color lightBgBottom = Color(0xFFFFFFFF);
+  static const Color lightTextPrimary = Color(0xFF3D274E);
+  static const Color lightTextSecondary = Color(0xFF7C57A0);
+  static const Color lightSurface = Color(0xFFFFFFFF);
+  static const Color lightSurfaceSoft = Color(0xFFE0C9F0);
+  static const Color lightAccent = Color(0xFF6E35A3);
+  static const Color lightBorder = Color(0xFFBC95D8);
+  static const Color lightOrbTop = Color(0xFFB786D6);
+  static const Color lightOrbBottom = Color(0xFF69329B);
+  static const Color lightShadow = Color(0xFF6F39AF);
+
+  static const Color darkBgTop = Color(0xFF32143E);
+  static const Color darkBgBottom = Color(0xFF4D255A);
+  static const Color darkTextPrimary = Color(0xFFF4EAFB);
+  static const Color darkTextSecondary = Color(0xFFE8D4F4);
+  static const Color darkSurface = Color(0xFF341C49);
+  static const Color darkSurfaceElevated = Color(0xFF46275E);
+  static const Color darkAccent = Color(0xFFBC80DE);
+  static const Color darkBorder = Color(0xFFCC98E7);
+  static const Color darkOrbTop = Color(0xFFA265C9);
+  static const Color darkOrbBottom = Color(0xFF4F286F);
+  static const Color darkShadow = Color(0xFF0C0515);
+}

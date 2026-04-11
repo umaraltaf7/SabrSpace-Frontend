@@ -7,7 +7,6 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'package:sabr_space/core/constants/app_spacing.dart';
 import 'package:sabr_space/core/constants/app_strings.dart';
-import 'package:sabr_space/core/theme/theme_palette.dart';
 import 'package:sabr_space/core/theme/app_typography.dart';
 import 'package:sabr_space/core/widgets/screen_back_button.dart';
 import 'package:sabr_space/features/sanctuary/presentation/models/breathe_session_args.dart';
@@ -33,12 +32,30 @@ class _BreatheMinimalScreenState extends State<BreatheMinimalScreen> {
   @override
   Widget build(BuildContext context) {
     final media = MediaQuery.of(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final hPad = _horizontalPad(media.size.width);
 
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
-      body: SafeArea(
-        child: LayoutBuilder(
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: isDark
+                ? const [
+                    _BreathePalette.darkBackgroundTop,
+                    _BreathePalette.darkBackgroundBottom,
+                  ]
+                : const [
+                    _BreathePalette.lightBackgroundTop,
+                    _BreathePalette.lightBackgroundBottom,
+                  ],
+          ),
+        ),
+        child: SafeArea(
+          child: LayoutBuilder(
           builder: (context, constraints) {
             final maxW = math.min(constraints.maxWidth - 2 * hPad, _maxContent);
             return Align(
@@ -57,30 +74,16 @@ class _BreatheMinimalScreenState extends State<BreatheMinimalScreen> {
                     children: [
                       _topBar(context),
                       const SizedBox(height: AppSpacing.lg),
-                      Text(
-                        AppStrings.breathe,
-                        textAlign: TextAlign.center,
-                        style: AppTypography.headlineMedium(context).copyWith(
-                          color: context.palette.breatheAccent,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      const SizedBox(height: AppSpacing.sm),
-                      Text(
-                        AppStrings.breatheSetupSubtitle,
-                        textAlign: TextAlign.center,
-                        style: AppTypography.bodySmall(context).copyWith(
-                          color: context.palette.onSurfaceVariant,
-                          height: 1.5,
-                        ),
-                      ),
+                      _BreatheHeroCard(isDark: isDark),
                       const SizedBox(height: AppSpacing.xxl),
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
                           AppStrings.breatheSelectTechnique,
                           style: AppTypography.labelSmall(context).copyWith(
-                            color: context.palette.outline,
+                            color: isDark
+                                ? _BreathePalette.darkTextSecondary
+                                : _BreathePalette.lightTextSecondary,
                             letterSpacing: 1.4,
                             fontWeight: FontWeight.w600,
                           ),
@@ -120,7 +123,9 @@ class _BreatheMinimalScreenState extends State<BreatheMinimalScreen> {
                         child: Text(
                           AppStrings.breatheDurationLabel,
                           style: AppTypography.labelSmall(context).copyWith(
-                            color: context.palette.outline,
+                            color: isDark
+                                ? _BreathePalette.darkTextSecondary
+                                : _BreathePalette.lightTextSecondary,
                             letterSpacing: 1.4,
                             fontWeight: FontWeight.w600,
                           ),
@@ -161,12 +166,17 @@ class _BreatheMinimalScreenState extends State<BreatheMinimalScreen> {
                           ),
                         ),
                         style: FilledButton.styleFrom(
-                          backgroundColor: context.palette.breatheAccent,
+                          backgroundColor: isDark
+                              ? _BreathePalette.darkAccent
+                              : _BreathePalette.lightAccent,
                           foregroundColor: Colors.white,
                           padding: const EdgeInsets.symmetric(vertical: 16),
                           shape: const StadiumBorder(),
                           elevation: 2,
-                          shadowColor: context.palette.breatheAccent.withValues(
+                          shadowColor: (isDark
+                                  ? _BreathePalette.darkAccent
+                                  : _BreathePalette.lightAccent)
+                              .withValues(
                             alpha: 0.45,
                           ),
                         ),
@@ -196,16 +206,20 @@ class _BreatheMinimalScreenState extends State<BreatheMinimalScreen> {
               ),
             );
           },
+          ),
         ),
       ),
     );
   }
 
   Widget _topBar(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Row(
       children: [
         ScreenBackButton(
-          iconColor: context.palette.breatheAccent,
+          iconColor: isDark
+              ? _BreathePalette.darkAccentSoft
+              : _BreathePalette.lightAccent,
         ),
         Expanded(
           child: Text(
@@ -215,12 +229,17 @@ class _BreatheMinimalScreenState extends State<BreatheMinimalScreen> {
               fontSize: 15,
               fontStyle: FontStyle.italic,
               fontWeight: FontWeight.w500,
-              color: context.palette.breatheAccent,
+              color: isDark
+                  ? _BreathePalette.darkAccentSoft
+                  : _BreathePalette.lightAccent,
             ),
           ),
         ),
         Material(
-          color: context.palette.breatheAccent.withValues(alpha: 0.12),
+          color: (isDark
+                  ? _BreathePalette.darkAccentSoft
+                  : _BreathePalette.lightAccent)
+              .withValues(alpha: 0.15),
           shape: const CircleBorder(),
           child: InkWell(
             customBorder: const CircleBorder(),
@@ -229,7 +248,9 @@ class _BreatheMinimalScreenState extends State<BreatheMinimalScreen> {
               padding: const EdgeInsets.all(10),
               child: Icon(
                 Icons.person_rounded,
-                color: context.palette.breatheAccent,
+                color: isDark
+                    ? _BreathePalette.darkAccentSoft
+                    : _BreathePalette.lightAccent,
                 size: 22,
               ),
             ),
@@ -265,19 +286,33 @@ class _TechniqueCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final border = selected
-        ? Border.all(color: context.palette.breatheAccent, width: 1.5)
+        ? Border.all(
+            color: isDark
+                ? _BreathePalette.darkAccentSoft
+                : _BreathePalette.lightAccent,
+            width: 1.5,
+          )
         : Border.all(color: Colors.transparent, width: 1.5);
 
-    final cs = Theme.of(context).colorScheme;
-    final bg =
-        selected ? cs.primaryContainer : cs.surfaceContainerHighest;
-    // On primaryContainer, pair with onPrimaryContainer for readable contrast (light mode).
-    final titleColor =
-        selected ? cs.onPrimaryContainer : context.palette.breatheAccent;
+    final bg = selected
+        ? (isDark
+            ? _BreathePalette.darkCardTop
+            : _BreathePalette.lightCardTop)
+        : (isDark
+            ? _BreathePalette.darkSurfaceElevated
+            : _BreathePalette.lightSurface);
+    final titleColor = selected
+        ? Colors.white
+        : (isDark
+            ? _BreathePalette.darkTextPrimary
+            : _BreathePalette.lightTextPrimary);
     final subtitleColor = selected
-        ? cs.onPrimaryContainer.withValues(alpha: 0.88)
-        : context.palette.onSurfaceVariant;
+        ? Colors.white.withValues(alpha: 0.90)
+        : (isDark
+            ? _BreathePalette.darkTextSecondary
+            : _BreathePalette.lightTextSecondary);
 
     return Material(
       color: Colors.transparent,
@@ -292,7 +327,10 @@ class _TechniqueCard extends StatelessWidget {
             boxShadow: [
               if (!selected)
                 BoxShadow(
-                  color: context.palette.onSurface.withValues(alpha: 0.04),
+                  color: (isDark
+                          ? _BreathePalette.darkShadow
+                          : _BreathePalette.lightShadow)
+                      .withValues(alpha: 0.28),
                   blurRadius: 12,
                   offset: const Offset(0, 4),
                 ),
@@ -353,7 +391,9 @@ class _TechniqueCard extends StatelessWidget {
                         )
                       : Icon(
                           Icons.circle_outlined,
-                          color: context.palette.outlineVariant,
+                          color: isDark
+                              ? _BreathePalette.darkTextSecondary
+                              : _BreathePalette.lightTextSecondary,
                           size: 28,
                         ),
                 ),
@@ -377,11 +417,19 @@ class _TechniqueTag extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg = cardSelected
-        ? cs.onPrimaryContainer.withValues(alpha: 0.14)
-        : context.palette.primaryFixed.withValues(alpha: 0.55);
-    final fg = cardSelected ? cs.onPrimaryContainer : context.palette.breatheAccent;
+        ? (isDark
+                ? _BreathePalette.darkAccentSoft
+                : _BreathePalette.lightAccent)
+            .withValues(alpha: 0.20)
+        : (isDark
+                ? _BreathePalette.darkAccentSoft
+                : _BreathePalette.lightAccentSoft)
+            .withValues(alpha: 0.45);
+    final fg = cardSelected
+        ? Colors.white
+        : (isDark ? _BreathePalette.darkTextPrimary : _BreathePalette.lightAccent);
 
     return Container(
       padding: const EdgeInsets.symmetric(
@@ -418,6 +466,7 @@ class _DurationPill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -429,13 +478,20 @@ class _DurationPill extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 12),
           decoration: BoxDecoration(
             color: selected
-                ? context.palette.breatheAccent
-                : Theme.of(context).colorScheme.surfaceContainerHigh,
+                ? (isDark
+                    ? _BreathePalette.darkAccent
+                    : _BreathePalette.lightAccent)
+                : (isDark
+                    ? _BreathePalette.darkSurfaceElevated
+                    : _BreathePalette.lightSurface),
             borderRadius: BorderRadius.circular(999),
             boxShadow: selected
                 ? [
                     BoxShadow(
-                      color: context.palette.breatheAccent.withValues(alpha: 0.35),
+                      color: (isDark
+                              ? _BreathePalette.darkAccent
+                              : _BreathePalette.lightAccent)
+                          .withValues(alpha: 0.35),
                       blurRadius: 10,
                       offset: const Offset(0, 4),
                     ),
@@ -446,7 +502,11 @@ class _DurationPill extends StatelessWidget {
           child: Text(
             label,
             style: AppTypography.labelLarge(context).copyWith(
-              color: selected ? Colors.white : context.palette.onSurfaceVariant,
+              color: selected
+                  ? Colors.white
+                  : (isDark
+                      ? _BreathePalette.darkTextSecondary
+                      : _BreathePalette.lightTextSecondary),
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -467,21 +527,29 @@ class _DhikrCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceContainerLowest,
+        color: isDark
+            ? _BreathePalette.darkSurface
+            : _BreathePalette.lightSurface,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: context.palette.onSurface.withValues(alpha: 0.07),
+            color: (isDark
+                    ? _BreathePalette.darkShadow
+                    : _BreathePalette.lightShadow)
+                .withValues(alpha: 0.30),
             blurRadius: 20,
             offset: const Offset(0, 8),
             spreadRadius: -2,
           ),
         ],
         border: Border.all(
-          color: context.palette.outlineVariant.withValues(alpha: 0.35),
+          color: isDark
+              ? _BreathePalette.darkBorder.withValues(alpha: 0.45)
+              : _BreathePalette.lightBorder.withValues(alpha: 0.45),
         ),
       ),
       child: Row(
@@ -491,12 +559,16 @@ class _DhikrCard extends StatelessWidget {
             height: 44,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: Theme.of(context).colorScheme.secondaryContainer,
+              color: isDark
+                  ? _BreathePalette.darkAccent.withValues(alpha: 0.25)
+                  : _BreathePalette.lightAccentSoft.withValues(alpha: 0.65),
             ),
             alignment: Alignment.center,
             child: Icon(
               Icons.auto_awesome_rounded,
-              color: context.palette.secondaryFixedDim,
+              color: isDark
+                  ? _BreathePalette.darkAccentSoft
+                  : _BreathePalette.lightAccent,
               size: 22,
             ),
           ),
@@ -508,7 +580,9 @@ class _DhikrCard extends StatelessWidget {
                 Text(
                   AppStrings.breathePairDhikr,
                   style: AppTypography.titleSmall(context).copyWith(
-                    color: context.palette.onSurface,
+                    color: isDark
+                        ? _BreathePalette.darkTextPrimary
+                        : _BreathePalette.lightTextPrimary,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
@@ -516,7 +590,9 @@ class _DhikrCard extends StatelessWidget {
                 Text(
                   AppStrings.breathePairDhikrSub,
                   style: AppTypography.bodySmall(context).copyWith(
-                    color: context.palette.onSurfaceVariant,
+                    color: isDark
+                        ? _BreathePalette.darkTextSecondary
+                        : _BreathePalette.lightTextSecondary,
                     fontStyle: FontStyle.italic,
                     height: 1.35,
                   ),
@@ -527,10 +603,197 @@ class _DhikrCard extends StatelessWidget {
           CupertinoSwitch(
             value: value,
             onChanged: onChanged,
-            activeTrackColor: context.palette.breatheAccent,
+            activeTrackColor: isDark
+                ? _BreathePalette.darkAccent
+                : _BreathePalette.lightAccent,
           ),
         ],
       ),
     );
   }
+}
+
+class _BreatheHeroCard extends StatelessWidget {
+  const _BreatheHeroCard({required this.isDark});
+
+  final bool isDark;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 220,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(24),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: isDark
+              ? const [_BreathePalette.darkCardTop, _BreathePalette.darkCardBottom]
+              : const [_BreathePalette.lightCardTop, _BreathePalette.lightCardBottom],
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: (isDark ? _BreathePalette.darkShadow : _BreathePalette.lightShadow)
+                .withValues(alpha: 0.45),
+            blurRadius: 24,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(24),
+        child: Stack(
+          children: [
+            Positioned.fill(
+              child: CustomPaint(
+                painter: _BreatheHeroPainter(isDark: isDark),
+              ),
+            ),
+            Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    AppStrings.breathe,
+                    textAlign: TextAlign.center,
+                    style: AppTypography.headlineMedium(context).copyWith(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.sm),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xxl),
+                    child: Text(
+                      AppStrings.breatheSetupSubtitle,
+                      textAlign: TextAlign.center,
+                      style: AppTypography.bodySmall(context).copyWith(
+                        color: Colors.white.withValues(alpha: 0.88),
+                        height: 1.5,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _BreatheHeroPainter extends CustomPainter {
+  _BreatheHeroPainter({required this.isDark});
+
+  final bool isDark;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final waveColor = Colors.white.withValues(alpha: isDark ? 0.26 : 0.34);
+    final wavePaint = Paint()
+      ..color = waveColor
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.8;
+    final waveA = Path()
+      ..moveTo(size.width * 0.08, size.height * 0.26)
+      ..quadraticBezierTo(
+        size.width * 0.26,
+        size.height * 0.20,
+        size.width * 0.46,
+        size.height * 0.27,
+      )
+      ..quadraticBezierTo(
+        size.width * 0.66,
+        size.height * 0.34,
+        size.width * 0.88,
+        size.height * 0.26,
+      );
+    final waveB = Path()
+      ..moveTo(size.width * 0.12, size.height * 0.38)
+      ..quadraticBezierTo(
+        size.width * 0.34,
+        size.height * 0.30,
+        size.width * 0.56,
+        size.height * 0.39,
+      )
+      ..quadraticBezierTo(
+        size.width * 0.74,
+        size.height * 0.46,
+        size.width * 0.90,
+        size.height * 0.40,
+      );
+    canvas.drawPath(waveA, wavePaint);
+    canvas.drawPath(waveB, wavePaint..strokeWidth = 1.5);
+
+    final leafColor = (isDark ? const Color(0xFFB88ED8) : const Color(0xFFE4C7F3))
+        .withValues(alpha: 0.68);
+    final leafPaint = Paint()..color = leafColor;
+    for (final leaf in <(Offset, double, double)>[
+      (Offset(size.width * 0.18, size.height * 0.18), -0.5, 16),
+      (Offset(size.width * 0.30, size.height * 0.14), -0.2, 13),
+      (Offset(size.width * 0.82, size.height * 0.30), -2.5, 14),
+      (Offset(size.width * 0.70, size.height * 0.22), -2.1, 12),
+      (Offset(size.width * 0.12, size.height * 0.68), 0.5, 12),
+      (Offset(size.width * 0.88, size.height * 0.70), -2.6, 12),
+    ]) {
+      canvas.save();
+      canvas.translate(leaf.$1.dx, leaf.$1.dy);
+      canvas.rotate(leaf.$2);
+      final path = Path()
+        ..moveTo(0, 0)
+        ..quadraticBezierTo(leaf.$3 * 0.35, -leaf.$3 * 0.24, leaf.$3, 0)
+        ..quadraticBezierTo(leaf.$3 * 0.35, leaf.$3 * 0.24, 0, 0)
+        ..close();
+      canvas.drawPath(path, leafPaint);
+      canvas.restore();
+    }
+
+    final particle = Paint()..color = Colors.white.withValues(alpha: isDark ? 0.46 : 0.62);
+    final rng = math.Random(31);
+    for (int i = 0; i < 14; i++) {
+      canvas.drawCircle(
+        Offset(rng.nextDouble() * size.width, rng.nextDouble() * size.height * 0.72),
+        rng.nextDouble() * 1.2 + 0.35,
+        particle,
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _BreatheHeroPainter oldDelegate) {
+    return oldDelegate.isDark != isDark;
+  }
+}
+
+class _BreathePalette {
+  static const Color lightBackgroundTop = Color(0xFFFFFFFF);
+  static const Color lightBackgroundBottom = Color(0xFFF1E4FB);
+  static const Color darkBackgroundTop = Color(0xFF32143E);
+  static const Color darkBackgroundBottom = Color(0xFF4D255A);
+
+  static const Color lightCardTop = Color(0xFF955FBE);
+  static const Color lightCardBottom = Color(0xFF63339A);
+  static const Color darkCardTop = Color(0xFF44245C);
+  static const Color darkCardBottom = Color(0xFF663783);
+
+  static const Color lightSurface = Color(0xFFECE1FA);
+  static const Color darkSurface = Color(0xFF341C49);
+  static const Color darkSurfaceElevated = Color(0xFF46275E);
+
+  static const Color lightBorder = Color(0xFFBC95D8);
+  static const Color darkBorder = Color(0xFFCC98E7);
+
+  static const Color lightAccent = Color(0xFF6E35A3);
+  static const Color lightAccentSoft = Color(0xFFCCA8E2);
+  static const Color darkAccent = Color(0xFFBC80DE);
+  static const Color darkAccentSoft = Color(0xFFE0B2F0);
+
+  static const Color lightTextPrimary = Color(0xFF3D274E);
+  static const Color lightTextSecondary = Color(0xFF7C57A0);
+  static const Color darkTextPrimary = Color(0xFFF4EAFB);
+  static const Color darkTextSecondary = Color(0xFFE8D4F4);
+
+  static const Color lightShadow = Color(0xFF6F39AF);
+  static const Color darkShadow = Color(0xFF0C0515);
 }

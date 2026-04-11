@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:sabr_space/core/constants/app_spacing.dart';
 import 'package:sabr_space/core/constants/app_strings.dart';
-import 'package:sabr_space/core/theme/app_gradients.dart';
 import 'package:sabr_space/core/theme/app_typography.dart';
-import 'package:sabr_space/core/theme/theme_palette.dart';
 import 'package:sabr_space/core/widgets/screen_back_button.dart';
 import 'package:sabr_space/features/profile/presentation/widgets/legal_document_content.dart';
 
@@ -62,12 +60,21 @@ class PrivacyPolicyScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
+      backgroundColor: isDark ? _LP.darkBgBottom : _LP.lightBgBottom,
       body: Container(
         width: double.infinity,
         height: double.infinity,
         decoration: BoxDecoration(
-          gradient: AppGradients.etherealBackground(context),
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: isDark
+                ? const [_LP.darkBgTop, _LP.darkBgBottom]
+                : const [_LP.lightBgTop, _LP.lightBgBottom],
+          ),
         ),
         child: SafeArea(
           child: Column(
@@ -82,12 +89,17 @@ class PrivacyPolicyScreen extends StatelessWidget {
                 ),
                 child: Row(
                   children: [
-                    const ScreenBackButton(),
+                    ScreenBackButton(
+                      iconColor:
+                          isDark ? _LP.darkAccent : _LP.lightAccent,
+                    ),
                     Expanded(
                       child: Text(
                         AppStrings.privacyPolicy,
                         style: AppTypography.titleLarge(context).copyWith(
-                          color: context.palette.primary,
+                          color: isDark
+                              ? _LP.darkTextPrimary
+                              : _LP.lightAccent,
                           fontWeight: FontWeight.w700,
                         ),
                         textAlign: TextAlign.center,
@@ -125,4 +137,14 @@ class PrivacyPolicyScreen extends StatelessWidget {
       ),
     );
   }
+}
+
+class _LP {
+  static const Color lightBgTop = Color(0xFFFFFFFF);
+  static const Color lightBgBottom = Color(0xFFFFFFFF);
+  static const Color lightAccent = Color(0xFF6E35A3);
+  static const Color darkBgTop = Color(0xFF32143E);
+  static const Color darkBgBottom = Color(0xFF4D255A);
+  static const Color darkTextPrimary = Color(0xFFF4EAFB);
+  static const Color darkAccent = Color(0xFFBC80DE);
 }

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import 'package:sabr_space/core/constants/app_spacing.dart';
-import 'package:sabr_space/core/theme/theme_palette.dart';
 import 'package:sabr_space/core/theme/app_typography.dart';
 
 /// One block in a privacy / terms document.
@@ -26,6 +25,8 @@ class LegalSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Padding(
       padding: const EdgeInsets.only(bottom: AppSpacing.xxl),
       child: Column(
@@ -34,7 +35,9 @@ class LegalSection extends StatelessWidget {
           Text(
             data.title,
             style: AppTypography.titleSmall(context).copyWith(
-              color: context.palette.primary,
+              color: isDark
+                  ? const Color(0xFFBC80DE)
+                  : const Color(0xFF6E35A3),
               fontWeight: FontWeight.w700,
             ),
           ),
@@ -42,7 +45,9 @@ class LegalSection extends StatelessWidget {
           Text(
             data.body,
             style: AppTypography.bodyMedium(context).copyWith(
-              color: context.palette.onSurfaceVariant,
+              color: isDark
+                  ? const Color(0xFFE8D4F4)
+                  : const Color(0xFF7C57A0),
               height: 1.55,
             ),
           ),
@@ -63,6 +68,8 @@ class LegalDocumentMeta extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Padding(
       padding: const EdgeInsets.only(bottom: AppSpacing.xxl),
       child: Column(
@@ -71,7 +78,9 @@ class LegalDocumentMeta extends StatelessWidget {
           Text(
             text,
             style: AppTypography.bodySmall(context).copyWith(
-              color: context.palette.outline,
+              color: isDark
+                  ? const Color(0xFFE8D4F4).withOpacity(0.60)
+                  : const Color(0xFF7C57A0).withOpacity(0.60),
               fontStyle: FontStyle.italic,
             ),
           ),
@@ -82,10 +91,15 @@ class LegalDocumentMeta extends StatelessWidget {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(2),
               gradient: LinearGradient(
-                colors: [
-                  context.palette.primary.withValues(alpha: 0.3),
-                  context.palette.primary,
-                ],
+                colors: isDark
+                    ? [
+                        const Color(0xFFBC80DE).withOpacity(0.3),
+                        const Color(0xFFBC80DE),
+                      ]
+                    : [
+                        const Color(0xFF6E35A3).withOpacity(0.3),
+                        const Color(0xFF6E35A3),
+                      ],
               ),
             ),
           ),
