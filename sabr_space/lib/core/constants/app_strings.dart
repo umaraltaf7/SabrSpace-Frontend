@@ -298,6 +298,17 @@ class AppStrings {
       'Full access to Dhikr, Breathing, Grief Burner & Premium Quotes.';
   static const String yearlyDesc =
       'Save 33%, unlock all premium features and future sanctuary updates.';
+  static const String voiceJournalPremiumTitle = 'Premium feature';
+  static const String voiceJournalPremiumDescription =
+      'Voice-to-text journaling is a premium option. Upgrade to get full access to the app and unlock this feature.';
+  static const String upgradeForFullAccess = 'Upgrade for full access';
+  static const String maybeLater = 'Maybe later';
+  static const String journalRewardTakeawaysTitle = 'Takeaways';
+  static const String journalRewardTakeawaysBody =
+      'Journaling helps you integrate new experiences, keep track of your progress, '
+      'and appreciate your strengths. Journal daily for best results!';
+  static const String journalRewardBraveryLabel = 'Bravery Points';
+  static const String journalRewardContinue = 'Continue';
 
   // ─── Support ───────────────────────────────────────────
   static const String supportOptions = 'Support Options';

@@ -19,10 +19,10 @@ class JournalEntriesNotifier extends Notifier<List<JournalEntry>> {
     return [];
   }
 
-  /// Load entries from Hive. Call once on first access.
-  Future<void> loadEntries() async {
-    if (_initialized) return;
+  /// Load entries from Hive. Use [force: true] when opening the calendar to sync with disk.
+  Future<void> loadEntries({bool force = false}) async {
     await _storage.init();
+    if (_initialized && !force) return;
     state = _storage.getAllEntries();
     _initialized = true;
   }

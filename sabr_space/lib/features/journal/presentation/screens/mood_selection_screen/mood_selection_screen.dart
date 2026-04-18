@@ -3,12 +3,14 @@ import 'package:go_router/go_router.dart';
 
 import 'package:sabr_space/core/constants/app_spacing.dart';
 import 'package:sabr_space/core/theme/app_typography.dart';
-import 'package:sabr_space/core/widgets/screen_back_button.dart';
+import 'package:sabr_space/core/theme/theme_palette.dart';
+import 'package:sabr_space/features/journal/data/journal_entry_flow.dart';
 import 'package:sabr_space/features/journal/data/models/journal_entry.dart';
+import 'package:sabr_space/features/journal/presentation/widgets/journal_flow_progress_bar.dart';
 
-/// Step 1 of the new-entry flow: select one or more mood tags.
+/// Step 1 of the new-entry flow: pick how you feel (single mood), then write.
 ///
-/// Passes the selected moods to the next screen (date → entry).
+/// Layout mirrors a card-style mood picker; colors come from [SabrPalette].
 class MoodSelectionScreen extends StatefulWidget {
   const MoodSelectionScreen({super.key});
 
@@ -16,292 +18,167 @@ class MoodSelectionScreen extends StatefulWidget {
   State<MoodSelectionScreen> createState() => _MoodSelectionScreenState();
 }
 
-class _MoodSelectionScreenState extends State<MoodSelectionScreen>
-    with SingleTickerProviderStateMixin {
-  final Set<JournalMood> _selected = {};
-  late AnimationController _fadeController;
-  late Animation<double> _fadeAnimation;
+class _MoodSelectionScreenState extends State<MoodSelectionScreen> {
+  JournalMood? _selected;
 
-  @override
-  void initState() {
-    super.initState();
-    _fadeController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 600),
-    );
-    _fadeAnimation = CurvedAnimation(
-      parent: _fadeController,
-      curve: Curves.easeOut,
-    );
-    _fadeController.forward();
-  }
-
-  @override
-  void dispose() {
-    _fadeController.dispose();
-    super.dispose();
+  void _goNext() {
+    final m = _selected;
+    if (m == null) return;
+    context.push('/journal/write?moods=${m.index}');
   }
 
   @override
   Widget build(BuildContext context) {
+    final palette = context.palette;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? _MP.darkBgBottom : _MP.lightBgBottom,
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
+      backgroundColor: palette.surfaceContainerLow,
+      body: DecoratedBox(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: isDark
-                ? const [_MP.darkBgTop, _MP.darkBgBottom]
-                : const [_MP.lightBgTop, _MP.lightBgBottom],
+            colors: [
+              palette.etherealGradientStart,
+              palette.etherealGradientEnd,
+            ],
           ),
         ),
         child: SafeArea(
-          child: FadeTransition(
-            opacity: _fadeAnimation,
-            child: Padding(
-              padding: AppSpacing.screenPadding,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: AppSpacing.sm),
-
-                  // ── Top bar ──
-                  Row(
-                    children: [
-                      ScreenBackButton(
-                        iconColor:
-                            isDark ? _MP.darkAccent : _MP.lightAccent,
-                      ),
-                      const Spacer(),
-                      Text(
-                        'Journal',
-                        style: AppTypography.titleMedium(context).copyWith(
-                          color: isDark
-                              ? _MP.darkTextPrimary
-                              : _MP.lightAccent,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      const Spacer(),
-                      const SizedBox(width: 48),
-                    ],
-                  ),
-
-                  const SizedBox(height: AppSpacing.xxl),
-
-                  // ── Heading orb with glow ──
-                  Center(
-                    child: Container(
-                      width: 80,
-                      height: 80,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: isDark
-                              ? const [
-                                  _MP.darkOrbTop,
-                                  _MP.darkOrbBottom,
-                                ]
-                              : const [
-                                  _MP.lightOrbTop,
-                                  _MP.lightOrbBottom,
-                                ],
-                        ),
-                        border: Border.all(
-                          color: isDark
-                              ? _MP.darkAccentSoft.withOpacity(0.62)
-                              : Colors.white.withOpacity(0.84),
-                          width: 2.2,
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: isDark
-                                ? _MP.darkAccent.withOpacity(0.50)
-                                : _MP.lightAccent.withOpacity(0.36),
-                            blurRadius: 28,
-                            spreadRadius: 6,
-                          ),
-                          BoxShadow(
-                            color: isDark
-                                ? _MP.darkAccentSoft.withOpacity(0.30)
-                                : _MP.lightAccentSoft.withOpacity(0.34),
-                            blurRadius: 48,
-                            spreadRadius: 14,
-                          ),
-                          if (isDark)
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.22),
-                              blurRadius: 18,
-                              spreadRadius: 2,
-                              offset: const Offset(0, 6),
-                            ),
-                        ],
-                      ),
-                      child: const Icon(
-                        Icons.self_improvement,
-                        color: Colors.white,
-                        size: 36,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: AppSpacing.xxl),
-
-                  Center(
-                    child: Text(
-                      'How are you feeling?',
-                      style:
-                          AppTypography.headlineSmall(context).copyWith(
-                        color: isDark
-                            ? _MP.darkTextPrimary
-                            : _MP.lightTextPrimary,
-                        fontWeight: FontWeight.w700,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                  const SizedBox(height: AppSpacing.sm),
-                  Center(
-                    child: Text(
-                      'Select the moods that resonate with you right now.',
-                      style: AppTypography.bodyMedium(context).copyWith(
-                        color: isDark
-                            ? _MP.darkTextSecondary
-                            : _MP.lightTextSecondary,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-
-                  const SizedBox(height: AppSpacing.xxl),
-
-                  // ── Decorative sparkle divider ──
-                  Center(
-                    child: SizedBox(
-                      height: 20,
-                      child: CustomPaint(
-                        size: const Size(160, 20),
-                        painter:
-                            _SparkleLinePainter(isDark: isDark),
-                      ),
-                    ),
-                  ),
-
-                  const SizedBox(height: AppSpacing.xxl),
-
-                  // ── Mood chips ──
-                  Wrap(
-                    spacing: AppSpacing.md,
-                    runSpacing: AppSpacing.md,
-                    children: JournalMood.values
-                        .map((mood) => _MoodChip(
-                              mood: mood,
-                              isDark: isDark,
-                              isSelected: _selected.contains(mood),
-                              onTap: () => setState(() {
-                                if (_selected.contains(mood)) {
-                                  _selected.remove(mood);
-                                } else {
-                                  _selected.add(mood);
-                                }
-                              }),
-                            ))
-                        .toList(),
-                  ),
-
-                  const Spacer(),
-
-                  // ── Continue button ──
-                  SizedBox(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.lg,
+              vertical: AppSpacing.md,
+            ),
+            child: Column(
+              children: [
+                Expanded(
+                  child: Container(
                     width: double.infinity,
-                    height: 56,
-                    child: AnimatedOpacity(
-                      duration: const Duration(milliseconds: 200),
-                      opacity: _selected.isNotEmpty ? 1.0 : 0.35,
-                      child: DecoratedBox(
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                            colors: isDark
-                                ? const [
-                                    _MP.darkAccent,
-                                    _MP.darkAccentSoft,
-                                  ]
-                                : const [
-                                    _MP.lightAccent,
-                                    _MP.lightOrbTop,
-                                  ],
+                    decoration: BoxDecoration(
+                      color: palette.surface,
+                      borderRadius: BorderRadius.circular(28),
+                      border: Border.all(
+                        color: palette.outlineVariant.withValues(alpha: 0.45),
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: palette.primary.withValues(
+                            alpha: isDark ? 0.12 : 0.08,
                           ),
-                          borderRadius: AppSpacing.borderRadiusFull,
-                          boxShadow: _selected.isNotEmpty
-                              ? [
-                                  BoxShadow(
-                                    color: isDark
-                                        ? _MP.darkAccent.withOpacity(0.40)
-                                        : _MP.lightAccent
-                                            .withOpacity(0.36),
-                                    blurRadius: 18,
-                                    offset: const Offset(0, 6),
-                                  ),
-                                  BoxShadow(
-                                    color: isDark
-                                        ? _MP.darkAccentSoft
-                                            .withOpacity(0.22)
-                                        : _MP.lightAccentSoft
-                                            .withOpacity(0.28),
-                                    blurRadius: 40,
-                                    spreadRadius: 4,
-                                  ),
-                                ]
-                              : null,
+                          blurRadius: 24,
+                          offset: const Offset(0, 10),
                         ),
-                        child: ElevatedButton(
-                          onPressed: _selected.isNotEmpty
-                              ? () {
-                                  final moodIndices = _selected
-                                      .map((m) => m.index.toString())
-                                      .join(',');
-                                  context.push(
-                                    '/journal/entry?moods=$moodIndices',
+                      ],
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(
+                        AppSpacing.lg,
+                        AppSpacing.md,
+                        AppSpacing.lg,
+                        AppSpacing.xl,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Row(
+                            children: [
+                              _RoundHeaderIcon(
+                                palette: palette,
+                                onPressed: () => context.pop(),
+                                child: Icon(
+                                  Icons.close_rounded,
+                                  size: 22,
+                                  color: palette.onSurfaceVariant,
+                                ),
+                              ),
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: AppSpacing.md,
+                                  ),
+                                  child: JournalFlowProgressBar(
+                                    currentStep: JournalEntryFlow.moodStep,
+                                    stepCount: JournalEntryFlow.totalSteps,
+                                  ),
+                                ),
+                              ),
+                              _RoundHeaderIcon(
+                                palette: palette,
+                                onPressed: () {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      behavior: SnackBarBehavior.floating,
+                                      backgroundColor:
+                                          palette.inverseSurface,
+                                      content: Text(
+                                        'Your feelings are valid. Take the time you need.',
+                                        style: AppTypography.bodyMedium(
+                                          context,
+                                        ).copyWith(
+                                          color: palette.inverseOnSurface,
+                                        ),
+                                      ),
+                                    ),
                                   );
-                                }
-                              : null,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.transparent,
-                            shadowColor: Colors.transparent,
-                            foregroundColor: Colors.white,
-                            disabledBackgroundColor: Colors.transparent,
-                            disabledForegroundColor:
-                                Colors.white.withOpacity(0.5),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: AppSpacing.borderRadiusFull,
-                            ),
+                                },
+                                child: Icon(
+                                  Icons.star_rounded,
+                                  size: 22,
+                                  color: palette.gold,
+                                ),
+                              ),
+                            ],
                           ),
-                          child: Text(
-                            _selected.isNotEmpty
-                                ? 'Continue'
-                                : 'Select a mood to continue',
-                            style: AppTypography.labelLarge(context)
+                          const SizedBox(height: AppSpacing.xxl),
+                          Text(
+                            'How are you feeling?',
+                            textAlign: TextAlign.center,
+                            style: AppTypography.headlineSmall(context)
                                 .copyWith(
-                              color: Colors.white,
-                              fontSize: 16,
+                              color: palette.onSurface,
                               fontWeight: FontWeight.w700,
                             ),
                           ),
-                        ),
+                          const SizedBox(height: AppSpacing.xxl),
+                          Expanded(
+                            child: GridView.builder(
+                              physics: const NeverScrollableScrollPhysics(),
+                              gridDelegate:
+                                  const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 3,
+                                mainAxisSpacing: AppSpacing.xl,
+                                crossAxisSpacing: AppSpacing.md,
+                                childAspectRatio: 0.78,
+                              ),
+                              itemCount: JournalMood.values.length,
+                              itemBuilder: (context, index) {
+                                final mood = JournalMood.values[index];
+                                final isOn = _selected == mood;
+                                return _MoodOrbTile(
+                                  mood: mood,
+                                  selected: isOn,
+                                  palette: palette,
+                                  onTap: () => setState(() {
+                                    _selected = isOn ? null : mood;
+                                  }),
+                                );
+                              },
+                            ),
+                          ),
+                          const SizedBox(height: AppSpacing.lg),
+                          _NextPillButton(
+                            enabled: _selected != null,
+                            palette: palette,
+                            onPressed: _goNext,
+                          ),
+                        ],
                       ),
                     ),
                   ),
-                  const SizedBox(height: AppSpacing.xxl),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),
@@ -310,219 +187,143 @@ class _MoodSelectionScreenState extends State<MoodSelectionScreen>
   }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// MOOD CHIP WIDGET
-// ─────────────────────────────────────────────────────────────────────────────
+class _RoundHeaderIcon extends StatelessWidget {
+  const _RoundHeaderIcon({
+    required this.palette,
+    required this.onPressed,
+    required this.child,
+  });
 
-class _MoodChip extends StatelessWidget {
-  const _MoodChip({
+  final SabrPalette palette;
+  final VoidCallback onPressed;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: palette.surfaceContainerLow,
+      shape: const CircleBorder(),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onPressed,
+        child: SizedBox(
+          width: 44,
+          height: 44,
+          child: Center(child: child),
+        ),
+      ),
+    );
+  }
+}
+
+class _MoodOrbTile extends StatelessWidget {
+  const _MoodOrbTile({
     required this.mood,
-    required this.isDark,
-    required this.isSelected,
+    required this.selected,
+    required this.palette,
     required this.onTap,
   });
 
   final JournalMood mood;
-  final bool isDark;
-  final bool isSelected;
+  final bool selected;
+  final SabrPalette palette;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return InkWell(
       onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        curve: Curves.easeOut,
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.xl,
-          vertical: AppSpacing.md,
-        ),
-        decoration: BoxDecoration(
-          gradient: isSelected
-              ? LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: isDark
-                      ? [
-                          _MP.darkAccent.withOpacity(0.32),
-                          _MP.darkAccentSoft.withOpacity(0.18),
-                        ]
-                      : [
-                          _MP.lightAccentSoft.withOpacity(0.60),
-                          _MP.lightAccent.withOpacity(0.14),
-                        ],
-                )
-              : LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: isDark
-                      ? [
-                          _MP.darkSurfaceElevated,
-                          _MP.darkSurface,
-                        ]
-                      : [
-                          _MP.lightSurfaceSoft,
-                          _MP.lightSurface,
-                        ],
-                ),
-          borderRadius: AppSpacing.borderRadiusFull,
-          border: Border.all(
-            color: isSelected
-                ? (isDark
-                    ? _MP.darkAccent.withOpacity(0.72)
-                    : _MP.lightAccent.withOpacity(0.72))
-                : (isDark
-                    ? _MP.darkBorder.withOpacity(0.36)
-                    : _MP.lightBorder.withOpacity(0.72)),
-            width: isSelected ? 1.8 : 1.2,
-          ),
-          boxShadow: isSelected
-              ? [
-                  BoxShadow(
-                    color: isDark
-                        ? _MP.darkAccent.withOpacity(0.28)
-                        : _MP.lightAccent.withOpacity(0.22),
-                    blurRadius: 14,
-                    offset: const Offset(0, 4),
-                  ),
-                ]
-              : [
-                  BoxShadow(
-                    color: isDark
-                        ? _MP.darkShadow.withOpacity(0.30)
-                        : _MP.lightShadow.withOpacity(0.18),
-                    blurRadius: 10,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(mood.emoji, style: const TextStyle(fontSize: 18)),
-            const SizedBox(width: AppSpacing.sm),
-            Text(
-              mood.label,
-              style: AppTypography.labelLarge(context).copyWith(
-                color: isSelected
-                    ? (isDark
-                        ? _MP.darkTextPrimary
-                        : _MP.lightAccent)
-                    : (isDark
-                        ? _MP.darkTextPrimary
-                        : _MP.lightTextPrimary),
-                fontWeight:
-                    isSelected ? FontWeight.w700 : FontWeight.w500,
+      borderRadius: BorderRadius.circular(20),
+      splashColor: palette.primary.withValues(alpha: 0.12),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 220),
+            curve: Curves.easeOutCubic,
+            width: 72,
+            height: 72,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: selected
+                  ? palette.primaryContainer.withValues(alpha: 0.45)
+                  : palette.surfaceContainerLow,
+              border: Border.all(
+                color: selected
+                    ? palette.primary
+                    : palette.outlineVariant.withValues(alpha: 0.5),
+                width: selected ? 2.5 : 1.2,
               ),
+              boxShadow: selected
+                  ? [
+                      BoxShadow(
+                        color: palette.primary.withValues(alpha: 0.28),
+                        blurRadius: 12,
+                        offset: const Offset(0, 4),
+                      ),
+                    ]
+                  : null,
             ),
-          ],
-        ),
+            alignment: Alignment.center,
+            child: Text(
+              mood.emoji,
+              style: const TextStyle(fontSize: 34),
+            ),
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          Text(
+            mood.label,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.center,
+            style: AppTypography.labelSmall(context).copyWith(
+              color: selected ? palette.primary : palette.onSurfaceVariant,
+              fontWeight: selected ? FontWeight.w700 : FontWeight.w600,
+              fontSize: 11,
+              height: 1.2,
+            ),
+          ),
+        ],
       ),
     );
   }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Sparkle line divider
-// ─────────────────────────────────────────────────────────────────────────────
+class _NextPillButton extends StatelessWidget {
+  const _NextPillButton({
+    required this.enabled,
+    required this.palette,
+    required this.onPressed,
+  });
 
-class _SparkleLinePainter extends CustomPainter {
-  final bool isDark;
-  _SparkleLinePainter({required this.isDark});
+  final bool enabled;
+  final SabrPalette palette;
+  final VoidCallback onPressed;
 
   @override
-  void paint(Canvas canvas, Size size) {
-    final cx = size.width / 2;
-    final cy = size.height / 2;
-
-    final lineColor = isDark
-        ? _MP.darkBorder.withOpacity(0.30)
-        : _MP.lightBorder.withOpacity(0.50);
-
-    canvas.drawLine(
-      Offset(cx - 70, cy),
-      Offset(cx - 12, cy),
-      Paint()
-        ..color = lineColor
-        ..strokeWidth = 0.8
-        ..strokeCap = StrokeCap.round,
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      height: 54,
+      child: Material(
+        color: enabled
+            ? palette.primary
+            : palette.onSurface.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(999),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: enabled ? onPressed : null,
+          child: Center(
+            child: Icon(
+              Icons.chevron_right_rounded,
+              size: 30,
+              color: enabled
+                  ? palette.onPrimary
+                  : palette.onSurface.withValues(alpha: 0.38),
+            ),
+          ),
+        ),
+      ),
     );
-    canvas.drawLine(
-      Offset(cx + 12, cy),
-      Offset(cx + 70, cy),
-      Paint()
-        ..color = lineColor
-        ..strokeWidth = 0.8
-        ..strokeCap = StrokeCap.round,
-    );
-
-    final accent = isDark ? _MP.darkAccentSoft : _MP.lightAccent;
-
-    final diamond = Path()
-      ..moveTo(cx, cy - 5)
-      ..lineTo(cx + 5, cy)
-      ..lineTo(cx, cy + 5)
-      ..lineTo(cx - 5, cy)
-      ..close();
-    canvas.drawPath(
-      diamond,
-      Paint()..color = accent.withOpacity(isDark ? 0.68 : 0.54),
-    );
-
-    final dotColor = accent.withOpacity(isDark ? 0.40 : 0.30);
-    for (final dx in [-50.0, -30.0, 30.0, 50.0]) {
-      canvas.drawCircle(Offset(cx + dx, cy), 1.5, Paint()..color = dotColor);
-    }
   }
-
-  @override
-  bool shouldRepaint(covariant _SparkleLinePainter old) =>
-      old.isDark != isDark;
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Palette — exact home screen colors
-// ─────────────────────────────────────────────────────────────────────────────
-
-class _MP {
-  // ── Light mode ──
-  static const Color lightBgTop = Color(0xFFFFFFFF);
-  static const Color lightBgBottom = Color(0xFFFFFFFF);
-
-  static const Color lightTextPrimary = Color(0xFF3D274E);
-  static const Color lightTextSecondary = Color(0xFF7C57A0);
-
-  static const Color lightSurface = Color(0xFFFFFFFF);
-  static const Color lightSurfaceSoft = Color(0xFFE0C9F0);
-
-  static const Color lightAccent = Color(0xFF6E35A3);
-  static const Color lightAccentSoft = Color(0xFFCCA8E2);
-
-  static const Color lightBorder = Color(0xFFBC95D8);
-
-  static const Color lightOrbTop = Color(0xFFB786D6);
-  static const Color lightOrbBottom = Color(0xFF69329B);
-
-  static const Color lightShadow = Color(0xFF6F39AF);
-
-  // ── Dark mode ──
-  static const Color darkBgTop = Color(0xFF32143E);
-  static const Color darkBgBottom = Color(0xFF4D255A);
-
-  static const Color darkTextPrimary = Color(0xFFF4EAFB);
-  static const Color darkTextSecondary = Color(0xFFE8D4F4);
-
-  static const Color darkSurface = Color(0xFF341C49);
-  static const Color darkSurfaceElevated = Color(0xFF46275E);
-
-  static const Color darkAccent = Color(0xFFBC80DE);
-  static const Color darkAccentSoft = Color(0xFFE0B2F0);
-
-  static const Color darkBorder = Color(0xFFCC98E7);
-
-  static const Color darkOrbTop = Color(0xFFA265C9);
-  static const Color darkOrbBottom = Color(0xFF4F286F);
-
-  static const Color darkShadow = Color(0xFF0C0515);
 }
