@@ -374,6 +374,11 @@ class HomeScreen extends StatelessWidget {
         route: '/journal',
       ),
       _QuickOption(
+        icon: Icons.visibility_rounded,
+        label: 'Visualize',
+        route: '/visualize',
+      ),
+      _QuickOption(
         icon: Icons.local_fire_department_rounded,
         label: 'Grief Burner',
         route: '/grief-write',
