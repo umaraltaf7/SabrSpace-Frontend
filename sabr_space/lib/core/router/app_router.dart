@@ -39,6 +39,10 @@ import 'package:sabr_space/features/journal/presentation/screens/journal_detail_
 import 'package:sabr_space/features/audio/presentation/models/audio_player_args.dart';
 import 'package:sabr_space/features/audio/presentation/screens/audio_library_screen.dart';
 import 'package:sabr_space/features/audio/presentation/screens/audio_player_screen.dart';
+import 'package:sabr_space/features/visualize/presentation/models/visualize_track.dart';
+import 'package:sabr_space/features/visualize/presentation/screens/visualize_screen/visualize_screen.dart';
+import 'package:sabr_space/features/visualize/presentation/screens/visualize_player_screen/visualize_player_screen.dart';
+import 'package:sabr_space/features/quran/presentation/screens/quran_screen/quran_screen.dart';
 
 final GlobalKey<ScaffoldState> _shellScaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -120,6 +124,13 @@ class _AppDrawer extends StatelessWidget {
           _drawerTile(
             context,
             isDark: isDark,
+            icon: Icons.menu_book_outlined,
+            label: 'Qur\'an',
+            path: '/quran',
+          ),
+          _drawerTile(
+            context,
+            isDark: isDark,
             icon: Icons.local_fire_department_outlined,
             label: AppStrings.grief,
             path: '/grief-write',
@@ -144,6 +155,13 @@ class _AppDrawer extends StatelessWidget {
             icon: Icons.book_outlined,
             label: 'Journal',
             path: '/journal',
+          ),
+          _drawerTile(
+            context,
+            isDark: isDark,
+            icon: Icons.visibility_outlined,
+            label: 'Visualize',
+            path: '/visualize',
           ),
           _drawerTile(
             context,
@@ -225,7 +243,7 @@ class _AppDrawer extends StatelessWidget {
   }
 }
 
-/// Shell: 5-item bottom nav with drawer access on "More".
+/// Shell: 4-item bottom nav with drawer access on "More".
 class _MainShell extends StatelessWidget {
   const _MainShell({required this.child, required this.routerState});
 
@@ -243,19 +261,13 @@ class _MainShell extends StatelessWidget {
         route: '/home',
       ),
       _ShellNavItem(
-        label: 'Breathe',
-        icon: Icons.air_rounded,
-        route: '/breathe',
+        label: 'Quran',
+        icon: Icons.menu_book_rounded,
+        route: '/quran',
       ),
       _ShellNavItem(
-        label: 'Grief',
-        icon: Icons.local_fire_department_rounded,
-        route: '/grief-write',
-      ),
-      _ShellNavItem(
-        label: 'Profile',
+        label: 'Self',
         icon: Icons.person_rounded,
-        route: '/profile',
       ),
       _ShellNavItem(
         label: 'More',
@@ -321,19 +333,8 @@ class _MainShell extends StatelessWidget {
 
 int _selectedShellIndex(String path) {
   if (path == '/home') return 0;
-  if (path == '/breathe' ||
-      path == '/breathe-session' ||
-      path == '/breathe-complete' ||
-      path == '/dhikr') {
-    return 1;
-  }
-  if (path == '/grief-write' ||
-      path == '/grief-burn' ||
-      path == '/grief-complete') {
-    return 2;
-  }
-  if (path == '/profile') return 3;
-  return 4;
+  if (path == '/quran') return 1;
+  return 3;
 }
 
 class _ShellNavItem {
@@ -365,6 +366,11 @@ final GoRouter appRouter = GoRouter(
       routes: [
         // Home
         GoRoute(path: '/home', builder: (context, state) => const HomeScreen()),
+
+        GoRoute(
+          path: '/quran',
+          builder: (context, state) => const QuranScreen(),
+        ),
 
         GoRoute(
           path: '/streak',
@@ -536,6 +542,22 @@ final GoRouter appRouter = GoRouter(
           builder: (context, state) {
             final id = state.pathParameters['id'] ?? '';
             return JournalDetailScreen(entryId: id);
+          },
+        ),
+
+        // ── Visualize ──────────────────────────────────────────
+        GoRoute(
+          path: '/visualize',
+          builder: (context, state) => const VisualizeScreen(),
+        ),
+        GoRoute(
+          path: '/visualize-player',
+          builder: (context, state) {
+            final extra = state.extra;
+            final track = extra is VisualizeTrack
+                ? extra
+                : VisualizeTrack.tilawatTracks.first;
+            return VisualizePlayerScreen(track: track);
           },
         ),
       ],
