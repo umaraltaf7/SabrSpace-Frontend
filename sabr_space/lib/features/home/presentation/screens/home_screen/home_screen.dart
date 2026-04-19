@@ -93,15 +93,15 @@ class HomeScreen extends StatelessWidget {
               ),
               TextSpan(
                 text: ' ✨',
-                style: AppTypography.titleLarge(context).copyWith(
-                  color: _HomePalette.gold,
-                ),
+                style: AppTypography.titleLarge(
+                  context,
+                ).copyWith(color: _HomePalette.gold),
               ),
             ],
           ),
         ),
         GestureDetector(
-          onTap: () => context.push('/streak'),
+          onTap: () => context.push('/profile'),
           child: Container(
             width: 68,
             height: 44,
@@ -130,16 +130,19 @@ class HomeScreen extends StatelessWidget {
                 BoxShadow(
                   color: isDark
                       ? _HomePalette.darkShadow.withOpacity(0.52)
-                  : _HomePalette.lightShadow.withOpacity(0.48),
+                      : _HomePalette.lightShadow.withOpacity(0.48),
                   blurRadius: 18,
                   offset: const Offset(0, 8),
                 ),
               ],
             ),
-            child: const Center(
-              child: Text(
-                '🧸',
-                style: TextStyle(fontSize: 22),
+            child: Center(
+              child: Icon(
+                Icons.person_rounded,
+                size: 26,
+                color: isDark
+                    ? _HomePalette.darkTextPrimary
+                    : _HomePalette.lightAccent,
               ),
             ),
           ),
@@ -160,10 +163,7 @@ class HomeScreen extends StatelessWidget {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: isDark
-                ? const [
-                    _HomePalette.darkHeroTop,
-                    _HomePalette.darkHeroBottom,
-                  ]
+                ? const [_HomePalette.darkHeroTop, _HomePalette.darkHeroBottom]
                 : const [
                     _HomePalette.lightHeroTop,
                     _HomePalette.lightHeroBottom,
@@ -190,9 +190,7 @@ class HomeScreen extends StatelessWidget {
           child: Stack(
             children: [
               Positioned.fill(
-                child: CustomPaint(
-                  painter: _HeroScenePainter(isDark: isDark),
-                ),
+                child: CustomPaint(painter: _HeroScenePainter(isDark: isDark)),
               ),
               Positioned.fill(
                 child: IgnorePointer(
@@ -599,10 +597,7 @@ class _MeditationCardData {
   final String title;
   final int minutes;
 
-  const _MeditationCardData({
-    required this.title,
-    required this.minutes,
-  });
+  const _MeditationCardData({required this.title, required this.minutes});
 }
 
 class _MeditationCard extends StatelessWidget {
@@ -630,10 +625,7 @@ class _MeditationCard extends StatelessWidget {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: isDark
-                ? const [
-                    _HomePalette.darkCardTop,
-                    _HomePalette.darkCardBottom,
-                  ]
+                ? const [_HomePalette.darkCardTop, _HomePalette.darkCardBottom]
                 : const [
                     _HomePalette.lightCardTop,
                     _HomePalette.lightCardBottom,
@@ -738,9 +730,9 @@ class _MeditationCard extends StatelessWidget {
                       children: [
                         Text(
                           '${item.minutes} min',
-                          style: AppTypography.bodySmall(context).copyWith(
-                            color: Colors.white.withOpacity(0.96),
-                          ),
+                          style: AppTypography.bodySmall(
+                            context,
+                          ).copyWith(color: Colors.white.withOpacity(0.96)),
                         ),
                         const Spacer(),
                         Container(
@@ -1237,10 +1229,30 @@ class _HeroScenePainter extends CustomPainter {
       warm,
     );
 
-    _drawSparkle(canvas, Offset(size.width * 0.44, size.height * 0.18), 2.5, dim);
-    _drawSparkle(canvas, Offset(size.width * 0.66, size.height * 0.26), 2.0, dim);
-    _drawSparkle(canvas, Offset(size.width * 0.36, size.height * 0.40), 2.0, dim);
-    _drawSparkle(canvas, Offset(size.width * 0.75, size.height * 0.22), 2.5, dim);
+    _drawSparkle(
+      canvas,
+      Offset(size.width * 0.44, size.height * 0.18),
+      2.5,
+      dim,
+    );
+    _drawSparkle(
+      canvas,
+      Offset(size.width * 0.66, size.height * 0.26),
+      2.0,
+      dim,
+    );
+    _drawSparkle(
+      canvas,
+      Offset(size.width * 0.36, size.height * 0.40),
+      2.0,
+      dim,
+    );
+    _drawSparkle(
+      canvas,
+      Offset(size.width * 0.75, size.height * 0.22),
+      2.5,
+      dim,
+    );
 
     final dotColor = isDark
         ? Colors.white.withOpacity(0.48)
@@ -1299,10 +1311,7 @@ class _CardScenePainter extends CustomPainter {
   final bool isDark;
   final int sceneIndex;
 
-  _CardScenePainter({
-    required this.isDark,
-    required this.sceneIndex,
-  });
+  _CardScenePainter({required this.isDark, required this.sceneIndex});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -1319,14 +1328,8 @@ class _CardScenePainter extends CustomPainter {
       begin: Alignment.topCenter,
       end: Alignment.bottomCenter,
       colors: isDark
-          ? [
-              const Color(0xFF8E59AE).withOpacity(0.40),
-              Colors.transparent,
-            ]
-          : [
-              const Color(0xFFE7CFF4).withOpacity(0.46),
-              Colors.transparent,
-            ],
+          ? [const Color(0xFF8E59AE).withOpacity(0.40), Colors.transparent]
+          : [const Color(0xFFE7CFF4).withOpacity(0.46), Colors.transparent],
     );
 
     canvas.drawRect(

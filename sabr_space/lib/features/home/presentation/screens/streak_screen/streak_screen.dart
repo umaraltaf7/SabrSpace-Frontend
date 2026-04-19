@@ -1,23 +1,23 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:sabr_space/core/constants/app_spacing.dart';
 import 'package:sabr_space/core/constants/app_strings.dart';
+import 'package:sabr_space/core/providers/mood_update_progress_provider.dart';
 import 'package:sabr_space/core/theme/app_typography.dart';
 import 'package:sabr_space/core/widgets/screen_back_button.dart';
 
-class StreakScreen extends StatefulWidget {
+class StreakScreen extends ConsumerStatefulWidget {
   const StreakScreen({super.key});
 
   @override
-  State<StreakScreen> createState() => _StreakScreenState();
+  ConsumerState<StreakScreen> createState() => _StreakScreenState();
 }
 
-class _StreakScreenState extends State<StreakScreen>
+class _StreakScreenState extends ConsumerState<StreakScreen>
     with TickerProviderStateMixin {
-  static const int _currentStreakDays = 7;
-
   late final AnimationController _pulse;
   late final AnimationController _orbit;
   late final AnimationController _shimmer;
@@ -51,6 +51,10 @@ class _StreakScreenState extends State<StreakScreen>
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final size = MediaQuery.of(context).size;
+    final streakDays =
+        ref.watch(moodUpdateProgressProvider).value?.dailyStreakDays ?? 0;
+    final railDays = streakDays.clamp(0, 7);
+    final todayIndex = DateTime.now().weekday - 1;
 
     return Scaffold(
       body: Container(
@@ -112,7 +116,7 @@ class _StreakScreenState extends State<StreakScreen>
                           ),
                           const SizedBox(height: AppSpacing.xxxl),
                           _HeroStreakOrb(
-                            days: _currentStreakDays,
+                            days: streakDays,
                             pulse: CurvedAnimation(
                               parent: _pulse,
                               curve: Curves.easeInOutCubic,
@@ -136,8 +140,8 @@ class _StreakScreenState extends State<StreakScreen>
                           _buildThisWeekHeader(context, isDark),
                           const SizedBox(height: AppSpacing.lg),
                           _WeekStreakRail(
-                            daysCompleted: _currentStreakDays,
-                            todayIndex: 6,
+                            daysCompleted: railDays,
+                            todayIndex: todayIndex,
                             isDark: isDark,
                           ),
                           const SizedBox(height: AppSpacing.xxxl),
@@ -402,10 +406,25 @@ class _HeroStreakOrb extends StatelessWidget {
                       ),
                     ],
                   ),
-                  child: const Icon(
-                    Icons.local_fire_department_rounded,
-                    size: 56,
-                    color: Colors.white,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(
+                        Icons.local_fire_department_rounded,
+                        size: 44,
+                        color: Colors.white,
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        '$days',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 28,
+                          fontWeight: FontWeight.w800,
+                          height: 1.0,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
