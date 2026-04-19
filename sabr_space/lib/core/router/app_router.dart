@@ -35,6 +35,9 @@ import 'package:sabr_space/features/sanctuary/presentation/screens/zikr_counter_
 import 'package:sabr_space/features/journal/presentation/screens/journal_history_screen/journal_history_screen.dart';
 import 'package:sabr_space/features/journal/presentation/screens/mood_selection_screen/mood_selection_screen.dart';
 import 'package:sabr_space/features/journal/presentation/screens/journal_entry_screen/journal_entry_screen.dart';
+import 'package:sabr_space/features/journal/presentation/screens/journal_multistep_write_screen/journal_multistep_write_screen.dart';
+import 'package:sabr_space/features/journal/presentation/screens/journal_reward_screen/journal_reward_screen.dart';
+import 'package:sabr_space/features/journal/presentation/screens/journal_voice_premium_gate_screen/journal_voice_premium_gate_screen.dart';
 import 'package:sabr_space/features/journal/presentation/screens/journal_detail_screen/journal_detail_screen.dart';
 import 'package:sabr_space/features/audio/presentation/models/audio_player_args.dart';
 import 'package:sabr_space/features/audio/presentation/screens/audio_library_screen.dart';
@@ -527,7 +530,33 @@ final GoRouter appRouter = GoRouter(
           builder: (context, state) => const MoodSelectionScreen(),
         ),
 
-        // Journal — entry writing (new entry flow step 2)
+        // Journal — guided multi-step writing (after mood)
+        GoRoute(
+          path: '/journal/write',
+          builder: (context, state) {
+            final moods = state.uri.queryParameters['moods'] ?? '';
+            return JournalMultistepWriteScreen(moodIndices: moods);
+          },
+        ),
+
+        // Journal — voice journaling premium gate
+        GoRoute(
+          path: '/journal/voice-premium',
+          builder: (context, state) =>
+              const JournalVoicePremiumGateScreen(),
+        ),
+
+        // Journal — completion reward (after guided entry)
+        GoRoute(
+          path: '/journal/reward',
+          builder: (context, state) {
+            final extra = state.extra;
+            final total = extra is int ? extra : null;
+            return JournalRewardScreen(totalPoints: total);
+          },
+        ),
+
+        // Journal — legacy single-screen entry (deep links)
         GoRoute(
           path: '/journal/entry',
           builder: (context, state) {

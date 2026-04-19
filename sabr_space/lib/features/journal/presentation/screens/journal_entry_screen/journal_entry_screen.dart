@@ -9,6 +9,8 @@ import 'package:sabr_space/core/widgets/screen_back_button.dart';
 import 'package:sabr_space/features/journal/data/journal_prompts.dart';
 import 'package:sabr_space/features/journal/data/models/journal_entry.dart';
 import 'package:sabr_space/features/journal/data/providers/journal_providers.dart';
+import 'package:sabr_space/features/journal/data/journal_entry_flow.dart';
+import 'package:sabr_space/features/journal/presentation/widgets/journal_flow_progress_bar.dart';
 
 /// Step 2+3 combined: date picker + writing screen.
 ///
@@ -150,15 +152,36 @@ class _JournalEntryScreenState extends ConsumerState<JournalEntryScreen> {
               children: [
                 const SizedBox(height: AppSpacing.sm),
 
-                // ── Top bar ──
+                // ── Top bar (flow progress + save) ──
                 Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     ScreenBackButton(
                       iconColor:
                           isDark ? _JP.darkAccent : _JP.lightAccent,
                     ),
-                    const Spacer(),
-                    Text(
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AppSpacing.md,
+                        ),
+                        child: JournalFlowProgressBar(
+                          currentStep: JournalEntryFlow.totalSteps,
+                          stepCount: JournalEntryFlow.totalSteps,
+                        ),
+                      ),
+                    ),
+                    _SaveButton(
+                      saving: _saving,
+                      onPressed: _saving ? null : _saveEntry,
+                      isDark: isDark,
+                    ),
+                  ],
+                ),
+                Center(
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: AppSpacing.sm),
+                    child: Text(
                       'New Entry',
                       style: AppTypography.titleMedium(context).copyWith(
                         color: isDark
@@ -167,13 +190,7 @@ class _JournalEntryScreenState extends ConsumerState<JournalEntryScreen> {
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-                    const Spacer(),
-                    _SaveButton(
-                      saving: _saving,
-                      onPressed: _saving ? null : _saveEntry,
-                      isDark: isDark,
-                    ),
-                  ],
+                  ),
                 ),
 
                 const SizedBox(height: AppSpacing.lg),
