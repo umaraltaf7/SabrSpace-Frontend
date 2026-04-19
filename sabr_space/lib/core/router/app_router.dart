@@ -14,6 +14,7 @@ import 'package:sabr_space/features/home/presentation/screens/streak_screen/stre
 import 'package:sabr_space/features/intro/presentation/screens/intro_screen/intro_screen.dart';
 import 'package:sabr_space/features/intro/presentation/screens/login_screen/login_screen.dart';
 import 'package:sabr_space/features/intro/presentation/screens/signup_screen/signup_screen.dart';
+import 'package:sabr_space/features/profile/presentation/screens/mood_update_options_screen/mood_update_options_screen.dart';
 import 'package:sabr_space/features/profile/presentation/screens/premium_screen/premium_screen.dart';
 import 'package:sabr_space/features/profile/presentation/screens/profile_screen/profile_screen.dart';
 import 'package:sabr_space/features/profile/presentation/screens/privacy_policy_screen/privacy_policy_screen.dart';
@@ -58,9 +59,7 @@ class _AppDrawer extends StatelessWidget {
     final text = context.text;
 
     return Drawer(
-      backgroundColor: isDark
-          ? const Color(0xFF32143E)
-          : Colors.white,
+      backgroundColor: isDark ? const Color(0xFF32143E) : Colors.white,
       child: ListView(
         padding: EdgeInsets.zero,
         children: [
@@ -205,10 +204,7 @@ class _AppDrawer extends StatelessWidget {
         : const Color(0xFF3D274E);
 
     return ListTile(
-      leading: Icon(
-        icon,
-        color: selected ? activeColor : inactiveIconColor,
-      ),
+      leading: Icon(icon, color: selected ? activeColor : inactiveIconColor),
       title: Text(
         label,
         style: text.titleSmall?.copyWith(
@@ -237,11 +233,7 @@ class _MainShell extends StatelessWidget {
     final path = routerState.uri.path;
     final palette = context.palette;
     final items = const <_ShellNavItem>[
-      _ShellNavItem(
-        label: 'Home',
-        icon: Icons.home_filled,
-        route: '/home',
-      ),
+      _ShellNavItem(label: 'Home', icon: Icons.home_filled, route: '/home'),
       _ShellNavItem(
         label: 'Breathe',
         icon: Icons.air_rounded,
@@ -257,10 +249,7 @@ class _MainShell extends StatelessWidget {
         icon: Icons.person_rounded,
         route: '/profile',
       ),
-      _ShellNavItem(
-        label: 'More',
-        icon: Icons.more_horiz_rounded,
-      ),
+      _ShellNavItem(label: 'More', icon: Icons.more_horiz_rounded),
     ];
     final selectedIndex = _selectedShellIndex(path);
 
@@ -279,7 +268,9 @@ class _MainShell extends StatelessWidget {
               children: List.generate(items.length, (index) {
                 final item = items[index];
                 final selected = index == selectedIndex;
-                final color = selected ? palette.primary : palette.onSurfaceVariant;
+                final color = selected
+                    ? palette.primary
+                    : palette.onSurfaceVariant;
                 return Expanded(
                   child: InkWell(
                     onTap: () {
@@ -302,7 +293,9 @@ class _MainShell extends StatelessWidget {
                             item.label,
                             style: context.text.labelSmall?.copyWith(
                               color: color,
-                              fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+                              fontWeight: selected
+                                  ? FontWeight.w700
+                                  : FontWeight.w500,
                             ),
                           ),
                         ],
@@ -332,7 +325,7 @@ int _selectedShellIndex(String path) {
       path == '/grief-complete') {
     return 2;
   }
-  if (path == '/profile') return 3;
+  if (path == '/profile' || path == '/mood-update') return 3;
   return 4;
 }
 
@@ -341,11 +334,7 @@ class _ShellNavItem {
   final IconData icon;
   final String? route;
 
-  const _ShellNavItem({
-    required this.label,
-    required this.icon,
-    this.route,
-  });
+  const _ShellNavItem({required this.label, required this.icon, this.route});
 }
 
 /// Application router using go_router.
@@ -375,6 +364,12 @@ final GoRouter appRouter = GoRouter(
         GoRoute(
           path: '/mood-check',
           builder: (context, state) => const MoodCheckScreen(),
+        ),
+
+        // Mood meter → update options (journal / visualize / breathe)
+        GoRoute(
+          path: '/mood-update',
+          builder: (context, state) => const MoodUpdateOptionsScreen(),
         ),
 
         // Mood — English quotes carousel (after check-in)

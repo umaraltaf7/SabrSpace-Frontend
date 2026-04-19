@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:sabr_space/core/constants/app_spacing.dart';
+import 'package:sabr_space/core/providers/mood_update_progress_provider.dart';
 import 'package:sabr_space/core/theme/theme_palette.dart';
 import 'package:sabr_space/core/theme/app_gradients.dart';
 import 'package:sabr_space/core/theme/app_typography.dart';
@@ -9,11 +11,17 @@ import 'package:sabr_space/core/widgets/screen_back_button.dart';
 import 'package:sabr_space/features/intro/presentation/widgets/gradient_button.dart';
 
 /// Nūr Mindfulness & Spiritual Sanctuary screen.
-class MindfulnessScreen extends StatelessWidget {
+///
+/// When opened with `?mood_update=1` (from profile mood meter), shows a control
+/// to mark the “Visualize” task complete for the calmness meter.
+class MindfulnessScreen extends ConsumerWidget {
   const MindfulnessScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final fromMoodUpdate =
+        GoRouterState.of(context).uri.queryParameters['mood_update'] == '1';
+
     return Scaffold(
       body: Container(
         width: double.infinity,
@@ -27,11 +35,7 @@ class MindfulnessScreen extends StatelessWidget {
             child: Column(
               children: [
                 const SizedBox(height: AppSpacing.xl),
-                const Row(
-                  children: [
-                    ScreenBackButton(),
-                  ],
-                ),
+                const Row(children: [ScreenBackButton()]),
                 const Spacer(),
                 Container(
                   width: 80,
@@ -58,9 +62,9 @@ class MindfulnessScreen extends StatelessWidget {
                 const SizedBox(height: AppSpacing.md),
                 Text(
                   '& Spiritual Sanctuary',
-                  style: AppTypography.bodyLarge(context).copyWith(
-                    color: context.palette.onSurfaceVariant,
-                  ),
+                  style: AppTypography.bodyLarge(
+                    context,
+                  ).copyWith(color: context.palette.onSurfaceVariant),
                 ),
                 const SizedBox(height: AppSpacing.jumbo),
                 // Quick access cards
@@ -95,6 +99,19 @@ class MindfulnessScreen extends StatelessWidget {
                   ],
                 ),
                 const Spacer(),
+                if (fromMoodUpdate) ...[
+                  FilledButton.icon(
+                    onPressed: () async {
+                      await ref
+                          .read(moodUpdateProgressProvider.notifier)
+                          .completeVisualize();
+                      if (context.mounted) context.pop();
+                    },
+                    icon: const Icon(Icons.check_circle_outline_rounded),
+                    label: const Text('Mark visualization complete'),
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                ],
                 GradientButton(
                   text: 'Start Session',
                   onPressed: () => context.push('/breathe-session'),
@@ -133,4 +150,3 @@ class MindfulnessScreen extends StatelessWidget {
     );
   }
 }
-

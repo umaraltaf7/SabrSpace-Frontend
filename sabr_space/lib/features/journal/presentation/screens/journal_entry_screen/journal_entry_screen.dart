@@ -8,6 +8,7 @@ import 'package:sabr_space/core/theme/app_typography.dart';
 import 'package:sabr_space/core/widgets/screen_back_button.dart';
 import 'package:sabr_space/features/journal/data/journal_prompts.dart';
 import 'package:sabr_space/features/journal/data/models/journal_entry.dart';
+import 'package:sabr_space/core/providers/mood_update_progress_provider.dart';
 import 'package:sabr_space/features/journal/data/providers/journal_providers.dart';
 
 /// Step 2+3 combined: date picker + writing screen.
@@ -101,6 +102,7 @@ class _JournalEntryScreenState extends ConsumerState<JournalEntryScreen> {
     );
 
     await ref.read(journalEntriesProvider.notifier).addEntry(entry);
+    await ref.read(moodUpdateProgressProvider.notifier).completeJournal();
 
     if (mounted) {
       context.go('/journal');

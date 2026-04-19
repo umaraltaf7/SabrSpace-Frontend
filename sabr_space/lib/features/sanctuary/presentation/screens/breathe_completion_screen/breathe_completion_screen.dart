@@ -1,14 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:sabr_space/core/constants/app_spacing.dart';
+import 'package:sabr_space/core/providers/mood_update_progress_provider.dart';
 import 'package:sabr_space/core/constants/app_strings.dart';
 import 'package:sabr_space/core/theme/app_typography.dart';
 import 'package:sabr_space/core/widgets/screen_back_button.dart';
 
 /// Breathe session completion screen.
-class BreatheCompletionScreen extends StatelessWidget {
+class BreatheCompletionScreen extends ConsumerStatefulWidget {
   const BreatheCompletionScreen({super.key});
+
+  @override
+  ConsumerState<BreatheCompletionScreen> createState() =>
+      _BreatheCompletionScreenState();
+}
+
+class _BreatheCompletionScreenState
+    extends ConsumerState<BreatheCompletionScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(moodUpdateProgressProvider.notifier).completeBreathe();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,12 +54,7 @@ class BreatheCompletionScreen extends StatelessWidget {
             padding: AppSpacing.screenPadding,
             child: Column(
               children: [
-                Row(
-                  children: [
-                    const ScreenBackButton(),
-                    const Spacer(),
-                  ],
-                ),
+                Row(children: [const ScreenBackButton(), const Spacer()]),
                 const Spacer(flex: 2),
 
                 Container(
@@ -90,7 +102,9 @@ class BreatheCompletionScreen extends StatelessWidget {
                             height: 106,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color: Colors.white.withValues(alpha: isDark ? 0.16 : 0.24),
+                              color: Colors.white.withValues(
+                                alpha: isDark ? 0.16 : 0.24,
+                              ),
                               border: Border.all(
                                 color: Colors.white.withValues(alpha: 0.55),
                                 width: 1.8,
@@ -161,7 +175,8 @@ class BreatheCompletionScreen extends StatelessWidget {
                             end: Alignment.bottomCenter,
                             colors: isDark
                                 ? const [
-                                    _BreatheCompletionPalette.darkSurfaceElevated,
+                                    _BreatheCompletionPalette
+                                        .darkSurfaceElevated,
                                     _BreatheCompletionPalette.darkSurface,
                                   ]
                                 : const [
@@ -172,14 +187,18 @@ class BreatheCompletionScreen extends StatelessWidget {
                           borderRadius: BorderRadius.circular(18),
                           border: Border.all(
                             color: isDark
-                                ? _BreatheCompletionPalette.darkBorder.withValues(alpha: 0.45)
-                                : _BreatheCompletionPalette.lightBorder.withValues(alpha: 0.55),
+                                ? _BreatheCompletionPalette.darkBorder
+                                      .withValues(alpha: 0.45)
+                                : _BreatheCompletionPalette.lightBorder
+                                      .withValues(alpha: 0.55),
                           ),
                           boxShadow: [
                             BoxShadow(
                               color: isDark
-                                  ? _BreatheCompletionPalette.darkShadow.withValues(alpha: 0.40)
-                                  : _BreatheCompletionPalette.lightShadow.withValues(alpha: 0.24),
+                                  ? _BreatheCompletionPalette.darkShadow
+                                        .withValues(alpha: 0.40)
+                                  : _BreatheCompletionPalette.lightShadow
+                                        .withValues(alpha: 0.24),
                               blurRadius: 16,
                               offset: const Offset(0, 6),
                             ),
@@ -193,7 +212,8 @@ class BreatheCompletionScreen extends StatelessWidget {
                               style: AppTypography.titleSmall(context).copyWith(
                                 color: isDark
                                     ? _BreatheCompletionPalette.darkTextPrimary
-                                    : _BreatheCompletionPalette.lightTextPrimary,
+                                    : _BreatheCompletionPalette
+                                          .lightTextPrimary,
                                 fontWeight: FontWeight.w700,
                               ),
                             ),
@@ -202,7 +222,8 @@ class BreatheCompletionScreen extends StatelessWidget {
                               Icons.chevron_right_rounded,
                               color: isDark
                                   ? _BreatheCompletionPalette.darkTextSecondary
-                                  : _BreatheCompletionPalette.lightTextSecondary,
+                                  : _BreatheCompletionPalette
+                                        .lightTextSecondary,
                               size: 20,
                             ),
                           ],
@@ -240,11 +261,14 @@ class BreatheCompletionScreen extends StatelessWidget {
       ),
       child: Column(
         children: [
-          Text(value, style: AppTypography.headlineSmall(context).copyWith(
-            color: isDark
-                ? _BreatheCompletionPalette.darkAccentSoft
-                : _BreatheCompletionPalette.lightAccent,
-          )),
+          Text(
+            value,
+            style: AppTypography.headlineSmall(context).copyWith(
+              color: isDark
+                  ? _BreatheCompletionPalette.darkAccentSoft
+                  : _BreatheCompletionPalette.lightAccent,
+            ),
+          ),
           const SizedBox(height: 4),
           Text(
             label,
@@ -267,7 +291,8 @@ class _CompletionDecorPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final star = Paint()..color = Colors.white.withValues(alpha: isDark ? 0.58 : 0.74);
+    final star = Paint()
+      ..color = Colors.white.withValues(alpha: isDark ? 0.58 : 0.74);
     for (final p in <Offset>[
       Offset(size.width * 0.14, size.height * 0.14),
       Offset(size.width * 0.26, size.height * 0.20),
@@ -336,4 +361,3 @@ class _BreatheCompletionPalette {
   static const Color lightShadow = Color(0xFF6F39AF);
   static const Color darkShadow = Color(0xFF0C0515);
 }
-
