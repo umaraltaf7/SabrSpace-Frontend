@@ -50,6 +50,11 @@ import 'package:sabr_space/features/quran/presentation/screens/quran_screen/qura
 
 final GlobalKey<ScaffoldState> _shellScaffoldKey = GlobalKey<ScaffoldState>();
 
+/// Opens the main shell drawer (e.g. from nested [Scaffold]s like [ProfileScreen]).
+void openMainShellDrawer() {
+  _shellScaffoldKey.currentState?.openDrawer();
+}
+
 void _goFromDrawer(BuildContext context, String location) {
   context.go(location);
   Navigator.of(context).pop();
@@ -242,7 +247,7 @@ class _AppDrawer extends StatelessWidget {
   }
 }
 
-/// Shell: 4-item bottom nav with drawer access on "More".
+/// Shell: bottom nav (Home, Quran, Self) plus drawer from the Self page menu.
 class _MainShell extends StatelessWidget {
   const _MainShell({required this.child, required this.routerState});
 
@@ -263,8 +268,8 @@ class _MainShell extends StatelessWidget {
       _ShellNavItem(
         label: 'Self',
         icon: Icons.person_rounded,
+        route: '/profile',
       ),
-      _ShellNavItem(label: 'More', icon: Icons.more_horiz_rounded),
     ];
     final selectedIndex = _selectedShellIndex(path);
 
@@ -282,19 +287,17 @@ class _MainShell extends StatelessWidget {
             child: Row(
               children: List.generate(items.length, (index) {
                 final item = items[index];
-                final selected = index == selectedIndex;
+                final selected =
+                    selectedIndex >= 0 && index == selectedIndex;
                 final color = selected
                     ? palette.primary
                     : palette.onSurfaceVariant;
                 return Expanded(
                   child: InkWell(
                     onTap: () {
-                      if (item.route == null) {
-                        _shellScaffoldKey.currentState?.openDrawer();
-                        return;
-                      }
-                      if (path != item.route) {
-                        context.go(item.route!);
+                      final route = item.route;
+                      if (route != null && path != route) {
+                        context.go(route);
                       }
                     },
                     child: Padding(
@@ -336,13 +339,18 @@ int _selectedShellIndex(String path) {
       path == '/dhikr') {
     return 1;
   }
-  if (path == '/grief-write' ||
-      path == '/grief-burn' ||
-      path == '/grief-complete') {
+  if (path == '/profile' ||
+      path == '/mood-update' ||
+      path == '/mood-check' ||
+      path == '/streak' ||
+      path == '/visualize' ||
+      path == '/visualize-player' ||
+      path == '/mindfulness' ||
+      path == '/premium' ||
+      path == '/support') {
     return 2;
   }
-  if (path == '/profile' || path == '/mood-update') return 3;
-  return 4;
+  return -1;
 }
 
 class _ShellNavItem {
@@ -362,7 +370,7 @@ final GoRouter appRouter = GoRouter(
     GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
     GoRoute(path: '/signup', builder: (context, state) => const SignUpScreen()),
 
-    // ── Shell routes (bottom nav + drawer on "More") ──
+    // ── Shell routes (bottom nav + drawer from Self page) ──
     ShellRoute(
       builder: (context, state, child) {
         return _MainShell(routerState: state, child: child);

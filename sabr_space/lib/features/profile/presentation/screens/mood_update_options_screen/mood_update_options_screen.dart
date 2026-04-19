@@ -97,7 +97,7 @@ class MoodUpdateOptionsScreen extends StatelessWidget {
                   title: 'Visualize',
                   subtitle:
                       'Settle the mind with a short guided visualization.',
-                  onTap: () => context.push('/mindfulness?mood_update=1'),
+                  onTap: () => context.push('/visualize?mood_update=1'),
                 ),
                 const SizedBox(height: AppSpacing.md),
                 _OptionCard(

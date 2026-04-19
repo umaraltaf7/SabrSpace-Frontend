@@ -1,9 +1,11 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:sabr_space/core/constants/app_spacing.dart';
+import 'package:sabr_space/core/providers/mood_update_progress_provider.dart';
 import 'package:sabr_space/core/theme/app_typography.dart';
 import 'package:sabr_space/core/widgets/screen_back_button.dart';
 import 'package:sabr_space/features/visualize/presentation/models/visualize_track.dart';
@@ -63,6 +65,42 @@ class _VisualizeScreenState extends State<VisualizeScreen> {
                       _buildCategorySelector(context, isDark),
                       const SizedBox(height: AppSpacing.xxl),
                       _buildGrid(context, isDark),
+                      Consumer(
+                        builder: (context, ref, _) {
+                          final fromMoodUpdate =
+                              GoRouterState.of(context)
+                                  .uri
+                                  .queryParameters['mood_update'] ==
+                              '1';
+                          if (!fromMoodUpdate) {
+                            return const SizedBox.shrink();
+                          }
+                          return Padding(
+                            padding: const EdgeInsets.only(
+                              top: AppSpacing.xxl,
+                            ),
+                            child: SizedBox(
+                              width: double.infinity,
+                              child: FilledButton.icon(
+                                onPressed: () async {
+                                  await ref
+                                      .read(
+                                        moodUpdateProgressProvider.notifier,
+                                      )
+                                      .completeVisualize();
+                                  if (context.mounted) context.pop();
+                                },
+                                icon: const Icon(
+                                  Icons.check_circle_outline_rounded,
+                                ),
+                                label: const Text(
+                                  'Mark visualization complete',
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
                     ],
                   ),
                 ),

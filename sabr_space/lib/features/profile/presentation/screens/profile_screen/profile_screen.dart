@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import 'package:sabr_space/core/constants/app_spacing.dart';
 import 'package:sabr_space/core/providers/mood_update_progress_provider.dart';
+import 'package:sabr_space/core/router/app_router.dart';
 import 'package:sabr_space/core/providers/theme_mode_provider.dart';
 import 'package:sabr_space/core/theme/app_typography.dart';
 
@@ -47,7 +48,7 @@ class ProfileScreen extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _SelfHeader(isDark: isDark),
+                _SelfHeader(isDark: isDark, onOpenMenu: openMainShellDrawer),
                 const SizedBox(height: AppSpacing.lg),
                 _SelfHeroCard(isDark: isDark),
                 const SizedBox(height: AppSpacing.lg),
@@ -73,20 +74,31 @@ class ProfileScreen extends ConsumerWidget {
 }
 
 class _SelfHeader extends StatelessWidget {
-  const _SelfHeader({required this.isDark});
+  const _SelfHeader({required this.isDark, required this.onOpenMenu});
 
   final bool isDark;
+  final VoidCallback onOpenMenu;
 
   @override
   Widget build(BuildContext context) {
+    final primary = isDark
+        ? _SelfPalette.darkTextPrimary
+        : _SelfPalette.lightTextPrimary;
+
     return Row(
       children: [
+        IconButton(
+          onPressed: onOpenMenu,
+          tooltip: 'Menu',
+          icon: Icon(Icons.menu_rounded, color: primary),
+          padding: EdgeInsets.zero,
+          constraints: const BoxConstraints(minWidth: 40, minHeight: 40),
+        ),
+        const SizedBox(width: AppSpacing.xs),
         Text(
           'Self',
           style: AppTypography.headlineMedium(context).copyWith(
-            color: isDark
-                ? _SelfPalette.darkTextPrimary
-                : _SelfPalette.lightTextPrimary,
+            color: primary,
             fontWeight: FontWeight.w700,
           ),
         ),
